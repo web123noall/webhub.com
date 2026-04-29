@@ -58,7 +58,7 @@
         .avatar-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; background: #fff; }
         .avatar-option.selected-avt { border-color: var(--accent); transform: scale(1.1); }
 
-        #name-screen input { padding: 12px; font-size: 18px; border-radius: 10px; border: none; width: 70%; margin-bottom: 15px; text-align: center; outline: none;}
+        #name-screen input { padding: 12px; font-size: 18px; border-radius: 10px; border: none; width: 70%; margin-bottom: 15px; text-align: center; outline: none; background: #fff; color: #000;}
 
         .menu-btn {
             width: 100%; padding: 20px; margin: 10px 0;
@@ -128,7 +128,7 @@
             <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Olivia" class="avatar-option" onclick="selectAvt(this)">
             <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Ethan" class="avatar-option" onclick="selectAvt(this)">
         </div>
-        <input type="text" id="username" placeholder="Nhập tên...">
+        <input type="text" id="username" placeholder="Nhập tên của bạn...">
         <button class="menu-btn" onclick="startGame()">VÀO SÒNG</button>
     </div>
 
@@ -198,7 +198,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <script>
-    // --- FIREBASE CONFIG ---
+    // --- CONFIG FIREBASE CỦA THẾ VINH ---
     const firebaseConfig = {
       apiKey: "AIzaSyCfTt7HpFYkdV2P-bB1fMums_RVYsAf0yA",
       authDomain: "casino-online-84f74.firebaseapp.com",
@@ -221,11 +221,24 @@
     let rollInterval = null;
     const icons = { "Kéo": "✌️", "Búa": "✊", "Bao": "✋", "Tai": "🔴", "Xiu": "⚪" };
 
+    function selectAvt(el) {
+        document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected-avt'));
+        el.classList.add('selected-avt');
+        selectedAvtUrl = el.src;
+    }
+
+    function startGame() {
+        let name = document.getElementById('username').value.trim();
+        if(!name || name.length < 2) { showWebMsg("", "Tên phải từ 2 ký tự!", "warning"); return; }
+        username = name;
+        loadUserData(username);
+    }
+
     function loadUserData(name) {
         db.ref('users/' + name).once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                money = data.money || 5000000;
+                money = data.money;
                 selectedAvtUrl = data.avatar || selectedAvtUrl;
             } else {
                 money = 5000000;
@@ -242,19 +255,6 @@
             avatar: selectedAvtUrl,
             lastLogin: Date.now()
         });
-    }
-
-    function selectAvt(el) {
-        document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected-avt'));
-        el.classList.add('selected-avt');
-        selectedAvtUrl = el.src;
-    }
-
-    function startGame() {
-        let name = document.getElementById('username').value.trim();
-        if(!name || name.length < 2) { showWebMsg("", "Tên tối thiểu 2 ký tự!", "warning"); return; }
-        username = name;
-        loadUserData(username);
     }
 
     function enterLobby(name) {
@@ -367,6 +367,7 @@
             let res = (r1+r2) > 6 ? "Tai" : "Xiu";
             if(txBet) {
                 if(txBet.side === res) { money += txBet.amt * 2; showWebMsg("THẮNG", "Tài Xỉu: " + res, "win"); }
+                else { showWebMsg("THUA", "Tài Xỉu: " + res, "lose"); }
                 txBet = null;
             }
             txHistory.push(res[0]); if(txHistory.length>8) txHistory.shift();
