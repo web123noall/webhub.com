@@ -58,7 +58,7 @@
         .avatar-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; background: #fff; }
         .avatar-option.selected-avt { border-color: var(--accent); transform: scale(1.1); }
 
-        #name-screen input { padding: 12px; font-size: 18px; border-radius: 10px; border: none; width: 70%; margin-bottom: 15px; text-align: center; outline: none; background: #fff; color: #000;}
+        #name-screen input { padding: 12px; font-size: 18px; border-radius: 10px; border: none; width: 70%; margin-bottom: 15px; text-align: center; outline: none;}
 
         .menu-btn {
             width: 100%; padding: 20px; margin: 10px 0;
@@ -76,6 +76,7 @@
             text-align: center; margin-bottom: 20px; outline: none; font-weight: bold;
         }
 
+        /* Nút game Oẳn Tù Tì được nâng cấp */
         .game-btn { 
             padding: 15px 5px; border: 4px solid transparent; border-radius: 15px; 
             font-weight: 900; cursor: pointer; color: white; transition: 0.2s; 
@@ -128,7 +129,7 @@
             <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Olivia" class="avatar-option" onclick="selectAvt(this)">
             <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Ethan" class="avatar-option" onclick="selectAvt(this)">
         </div>
-        <input type="text" id="username" placeholder="Nhập tên của bạn...">
+        <input type="text" id="username" placeholder="Nhập tên...">
         <button class="menu-btn" onclick="startGame()">VÀO SÒNG</button>
     </div>
 
@@ -194,31 +195,14 @@
     </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
-    // --- CONFIG FIREBASE CỦA THẾ VINH ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyCfTt7HpFYkdV2P-bB1fMums_RVYsAf0yA",
-      authDomain: "casino-online-84f74.firebaseapp.com",
-      databaseURL: "https://casino-online-84f74-default-rtdb.firebaseio.com/",
-      projectId: "casino-online-84f74",
-      storageBucket: "casino-online-84f74.firebasestorage.app",
-      messagingSenderId: "366571652676",
-      appId: "1:366571652676:web:e0154b4bccd7e98dbcde11"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     let money = 5000000;
-    let username = "";
     let txTimer = 30, otxTimer = 30;
     let txBet = null, otxBet = null;
     let txHistory = [];
     let selectedAvtUrl = "https://api.dicebear.com/8.x/avataaars/svg?seed=Felix";
     let rollInterval = null;
+
     const icons = { "Kéo": "✌️", "Búa": "✊", "Bao": "✋", "Tai": "🔴", "Xiu": "⚪" };
 
     function selectAvt(el) {
@@ -228,51 +212,13 @@
     }
 
     function startGame() {
-        let name = document.getElementById('username').value.trim();
-        if(!name || name.length < 2) { showWebMsg("", "Tên phải từ 2 ký tự!", "warning"); return; }
-        username = name;
-        loadUserData(username);
-    }
-
-    function loadUserData(name) {
-        db.ref('users/' + name).once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                money = data.money;
-                selectedAvtUrl = data.avatar || selectedAvtUrl;
-            } else {
-                money = 5000000;
-                saveUserData(name);
-            }
-            enterLobby(name);
-        });
-    }
-
-    function saveUserData(name) {
-        if (!name) return;
-        db.ref('users/' + name).update({
-            money: money,
-            avatar: selectedAvtUrl,
-            lastLogin: Date.now()
-        });
-    }
-
-    function enterLobby(name) {
+        let name = document.getElementById('username').value;
+        if(!name) { showWebMsg("", "Vui lòng nhập tên!", "warning"); return; }
         document.getElementById('display-name').innerText = name;
         document.getElementById('user-avatar-display').src = selectedAvtUrl;
         document.getElementById('name-screen').style.display = 'none';
         document.getElementById('main-ui').style.display = 'block';
         showScreen('lobby');
-        updateMoneyDisplay();
-    }
-
-    function updateMoneyDisplay() { 
-        document.getElementById('money').innerText = money.toLocaleString('en-US');
-    }
-
-    function syncMoney() {
-        if(username) saveUserData(username);
-        updateMoneyDisplay();
     }
 
     function showScreen(id) {
@@ -286,16 +232,22 @@
     }
 
     function getVal(id) { return parseInt(document.getElementById(id).value.replace(/,/g, '')) || 0; }
+    function updateMoney() { document.getElementById('money').innerText = money.toLocaleString('en-US'); }
 
     function showWebMsg(main, sub, type) {
         const overlay = document.getElementById('result-overlay');
         const mainEl = document.getElementById('popup-main-text');
         const subEl = document.getElementById('popup-sub-text');
+        
         mainEl.innerText = main;
         subEl.innerText = sub;
+        
         mainEl.style.display = main === "" ? "none" : "block";
         mainEl.className = type; 
+
         subEl.style.fontSize = (type === 'win' || type === 'lose' || type === 'draw') ? "45px" : "22px";
+        subEl.className = (type === 'win' || type === 'lose' || type === 'draw') ? "" : type;
+
         overlay.style.display = 'flex';
         setTimeout(closeResult, 2500);
     }
@@ -304,37 +256,37 @@
 
     function betOTX(choice) {
         let amt = getVal('otx-bet-val');
-        if(amt <= 0) { showWebMsg("", "Nhập tiền cược!", "warning"); return; }
+        if(amt <= 0) { showWebMsg("", "Hãy nhập tiền cược!", "warning"); return; }
         if(otxBet && otxBet.choice === choice) {
             money += otxBet.amt; otxBet = null; resetBtns('otx');
             document.getElementById('otx-res').innerText = "HỦY CƯỢC";
         } else {
             if(otxBet) money += otxBet.amt;
-            if(amt > money) { showWebMsg("", "Không đủ tiền!", "warning"); return; }
+            if(amt > money) { showWebMsg("", "Bạn không đủ tiền cược!", "warning"); return; }
             money -= amt; otxBet = { choice, amt };
             resetBtns('otx');
             document.getElementById('btn-' + (choice==='Kéo'?'Keo':choice==='Búa'?'Bua':'Bao')).classList.add('selected');
             document.getElementById('otx-res').innerHTML = `CHỌN: ${choice.toUpperCase()} ${icons[choice]}`;
         }
-        syncMoney();
+        updateMoney();
     }
 
     function betTX(side) {
         if(txTimer < 2) return;
         let amt = getVal('tx-bet-val');
-        if(amt <= 0) { showWebMsg("", "Nhập tiền cược!", "warning"); return; }
+        if(amt <= 0) { showWebMsg("", "Hãy nhập tiền cược!", "warning"); return; }
         if(txBet && txBet.side === side) {
             money += txBet.amt; txBet = null; resetBtns('tx');
             document.getElementById('tx-res').innerText = "HỦY CƯỢC";
         } else {
             if(txBet) money += txBet.amt;
-            if(amt > money) { showWebMsg("", "Không đủ tiền!", "warning"); return; }
+            if(amt > money) { showWebMsg("", "Bạn không đủ tiền cược!", "warning"); return; }
             money -= amt; txBet = { side, amt };
             resetBtns('tx');
             document.getElementById('btn-' + side.toLowerCase()).classList.add('selected');
             document.getElementById('tx-res').innerText = `CHỌN: ${side.toUpperCase()}`;
         }
-        syncMoney();
+        updateMoney();
     }
 
     function resetBtns(game) {
@@ -346,6 +298,7 @@
         txTimer--; otxTimer--;
         const isTXVisible = document.getElementById('game-taixiu').style.display==='block';
         const isOTXVisible = document.getElementById('game-oan-tu-xi').style.display==='block';
+
         if(isTXVisible) document.getElementById('tx-timer').innerText = txTimer + "s";
         if(isOTXVisible) document.getElementById('otx-timer').innerText = otxTimer + "s";
 
@@ -365,15 +318,18 @@
             let r1 = Math.floor(Math.random()*6)+1, r2 = Math.floor(Math.random()*6)+1;
             document.getElementById('d1').innerText = r1; document.getElementById('d2').innerText = r2;
             let res = (r1+r2) > 6 ? "Tai" : "Xiu";
+            
             if(txBet) {
-                if(txBet.side === res) { money += txBet.amt * 2; showWebMsg("THẮNG", "Tài Xỉu: " + res, "win"); }
-                else { showWebMsg("THUA", "Tài Xỉu: " + res, "lose"); }
+                if(txBet.side === res) money += txBet.amt * 2;
                 txBet = null;
+            } else if(isTXVisible) {
+                showWebMsg("", "Bạn đã bỏ lỡ ván Tài Xỉu!", "miss");
             }
+
             txHistory.push(res[0]); if(txHistory.length>8) txHistory.shift();
             updateHistoryUI();
             document.getElementById('tx-res').innerText = `KẾT QUẢ: ${res.toUpperCase()}`;
-            resetBtns('tx'); txTimer = 31; syncMoney();
+            resetBtns('tx'); txTimer = 31; updateMoney();
         }
 
         if(otxTimer <= 0) {
@@ -382,14 +338,18 @@
                 let win = (otxBet.choice==="Búa"&&bot==="Kéo") || (otxBet.choice==="Kéo"&&bot==="Bao") || (otxBet.choice==="Bao"&&bot==="Búa");
                 let status = otxBet.choice === bot ? "HÒA" : win ? "THẮNG" : "THUA";
                 let type = status === "THẮNG" ? "win" : status === "THUA" ? "lose" : "draw";
+
                 if(status === "HÒA") money += otxBet.amt;
                 else if(status === "THẮNG") money += otxBet.amt * 2;
+                
                 if(isOTXVisible) showWebMsg(status, `${icons[otxBet.choice]} VS ${icons[bot]}`, type);
                 otxBet = null;
+            } else if(isOTXVisible) {
+                showWebMsg("", "Bạn đã bỏ lỡ ván Oẳn Tù Tì!", "miss");
             }
             otxTimer = 31; resetBtns('otx');
             document.getElementById('otx-res').innerText = "MỜI CƯỢC";
-            syncMoney();
+            updateMoney();
         }
     }, 1000);
 
