@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đua Vịt Siêu Rộng - Soi Cầu Chuẩn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Oswald:wght@700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-navy: #0b1325;
+            --card-bg: #121c2f;
+            --accent-neon: #2bc5f4;
+            --water-blue: #0077be;
+            --gold: #fbc02d;
+            --gold-glow: #f5b041;
+            --danger: #ff4757;
+            --success: #2ecc71;
+            --btn-cyan: #3dc8f5;
+            --btn-yellow: #f1c40f;
+        }
+
+        body {
+            font-family: 'Oswald', sans-serif;
+            background-color: var(--bg-navy);
+            color: #fff; margin: 0; padding: 10px 10px;
+            display: flex; flex-direction: column; align-items: center;
+            font-weight: 900; overflow-x: hidden;
+        }
+
+        /* TĂNG KÍCH THƯỚC BÀN CHƠI LÊN 1725px */
+        .top-info {
+            width: 100%; max-width: 1725px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+            border: 2px solid var(--accent-neon);
+            border-radius: 12px; padding: 8px 10px; box-sizing: border-box;
+            background-color: rgba(11, 19, 37, 0.8);
+            box-shadow: 0 0 10px rgba(43, 197, 244, 0.2);
+        }
+        .btn-home {
+            background: #369abf; color: #0b1d2e; text-decoration: none; padding: 6px 15px;
+            border-radius: 8px; font-size: 18px; border: none; font-weight: 900;
+        }
+        .balance {
+            color: var(--gold); font-size: 20px;
+            background: rgba(0,0,0,0.4); padding: 5px 20px; border-radius: 8px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .status-board {
+            width: 100%; max-width: 1725px;
+            display: flex; justify-content: flex-start; align-items: stretch; gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        /* NÚT LOA MỚI (X2.2 KÍCH THƯỚC) NẰM TRONG STATUS BOARD */
+        .mute-btn {
+            background: rgba(43, 197, 244, 0.1); border: 1px solid var(--accent-neon);
+            color: #fff; font-size: 35px; border-radius: 12px; padding: 5px 15px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .mute-btn.muted { opacity: 0.5; background: #333; border-color: #555; }
+
+        .timer-box {
+            background: var(--card-bg); border: 1px solid var(--danger);
+            color: var(--danger); font-size: 32px; padding: 5px 25px; border-radius: 12px;
+            min-width: 80px; text-align: center;
+            box-shadow: inset 0 0 10px rgba(255, 71, 87, 0.1);
+        }
+        .status-text {
+            background: var(--card-bg); border: 1px solid var(--accent-neon);
+            flex-grow: 1; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: var(--accent-neon);
+            text-transform: uppercase; letter-spacing: 1px; border-radius: 12px;
+            text-shadow: 0 0 8px rgba(43, 197, 244, 0.6);
+            box-shadow: inset 0 0 15px rgba(43, 197, 244, 0.1);
+        }
+
+        .race-track {
+            width: 100%; max-width: 1725px; height: 340px;
+            background: var(--water-blue); border-radius: 15px;
+            border: 2px solid var(--accent-neon); position: relative; overflow: hidden;
+            box-shadow: 0 0 15px rgba(43, 197, 244, 0.3);
+        }
+        .river-lane {
+            height: 16.66%; border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative; background: linear-gradient(180deg, #0077be, #005f99);
+        }
+        .finish-line {
+            position: absolute; right: 0; top: 0; bottom: 0; width: 45px;
+            background: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 50% / 20px 20px;
+            opacity: 0.9; z-index: 2; border-left: 3px solid #fff;
+        }
+
+        .track-toast {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85); padding: 10px 30px; border-radius: 12px;
+            font-size: 24px; z-index: 90; display: none; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 2px solid var(--accent-neon);
+        }
+
+        .duck {
+            font-size: 42px; position: absolute; left: 10px; top: 50%;
+            transform: translateY(-50%) scaleX(-1); z-index: 5;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .duck-id {
+            position: absolute; font-size: 15px; background: #fff; color: #000;
+            width: 20px; height: 20px; border-radius: 50%; text-align: center;
+            line-height: 20px; top: 0px; left: 15px; font-weight: 900;
+            transform: scaleX(-1); border: 2px solid #000;
+        }
+
+        .podium-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+        }
+        .step { width: 100px; display: flex; flex-direction: column; align-items: center; border-radius: 10px 10px 0 0; }
+        .step b { font-size: 60px; color: #000; margin-bottom: 5px; text-shadow: 2px 2px 0px #fff; }
+
+        /* --- BẢNG SOI CẦU (LỊCH SỬ KÈO) --- */
+        .history-board {
+            width: 100%; max-width: 1725px; background: rgba(11, 19, 37, 0.9);
+            border: 1px solid var(--accent-neon); border-radius: 8px; margin-top: 10px;
+            padding: 8px 15px; display: flex; align-items: center; gap: 15px; box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(43, 197, 244, 0.1); overflow-x: auto;
+        }
+        
+        .history-title { color: var(--gold); font-size: 16px; white-space: nowrap; text-transform: uppercase; }
+        
+        /* CĂN TRÁI CHO KÈO GẦN ĐÂY */
+        .history-list { display: flex; gap: 8px; flex-grow: 1; justify-content: flex-start; }
+        
+        .history-item {
+            background: #000; padding: 4px 10px; border-radius: 6px; border: 1px solid #333;
+            /* Đổi font bo tròn cho các số */
+            font-family: 'Nunito', sans-serif; font-size: 18px;
+            font-weight: 800; display: flex; gap: 4px; align-items: center; white-space: nowrap;
+        }
+        .h-t1 { color: #f1c40f; text-shadow: 0 0 5px rgba(241,196,15,0.5); }
+        .h-t2 { color: #bdc3c7; }
+        .h-t3 { color: #cd7f32; }
+        .h-sep { color: #555; font-size: 14px; }
+
+        /* --- BẢNG ĐIỀU KHIỂN CƯỢC --- */
+        .panel {
+            background: var(--bg-navy); width: 100%; max-width: 1725px;
+            padding: 15px; border-radius: 12px; margin-top: 10px;
+            border: 2px solid var(--accent-neon); text-align: center; box-sizing: border-box;
+        }
+        .duck-btn {
+            width: 65px; height: 65px; border-radius: 12px; border: 2px solid #2bc5f4;
+            background: #121c2f; color: white; font-size: 30px; font-weight: 800; cursor: pointer; margin: 0 5px;
+            /* Đổi font bo tròn */
+            font-family: 'Nunito', sans-serif;
+        }
+        .duck-btn.selected { background: var(--btn-cyan); color: #000; border-color: #fff; transform: translateY(-5px); }
+
+        .bet-input {
+            width: 100%; max-width: 600px; background: #000; border: 2px solid var(--accent-neon);
+            color: var(--gold); font-size: 30px; padding: 10px; border-radius: 8px;
+            text-align: center; margin: 15px 0; font-family: 'Oswald', sans-serif; font-weight: 900;
+        }
+
+        .btn-group { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        .btn-quick {
+            background: var(--btn-cyan); color: #000; border: none; padding: 10px 18px;
+            border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 18px;
+            /* Đổi font bo tròn */
+            font-family: 'Nunito', sans-serif;
+        }
+        .btn-quick.all-in { background: var(--btn-yellow); }
+
+        .action-group { display: flex; justify-content: center; gap: 15px; }
+        .btn-action {
+            padding: 10px 30px; border-radius: 8px; border: none; font-weight: 900; font-size: 20px; cursor: pointer;
+        }
+        .btn-confirm { background: var(--success); color: #fff; }
+        .btn-cancel { background: var(--danger); color: #fff; }
+
+        .disabled { opacity: 0.4; pointer-events: none; }
+
+        .history-board::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="top-info">
+        <a href="index.html" class="btn-home">← TRANG CHỦ</a>
+        <div class="balance" id="balance">💰 Đang tải...</div>
+    </div>
+
+    <div class="status-board">
+        <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Bật/Tắt âm thanh">🔊</button>
+        <div class="timer-box" id="timer">30s</div>
+        <div class="status-text" id="status">MỜI ĐẶT CƯỢC</div>
+    </div>
+
+    <div class="race-track" id="track">
+        <div class="track-toast" id="toast"></div>
+        <div class="finish-line"></div>
+        <div id="lanes" style="height: 100%;"></div>
+        
+        <div class="podium-overlay" id="podium">
+            <h1 id="res-msg" style="font-size: 50px; margin-bottom: 20px;"></h1>
+            <div style="display: flex; align-items: flex-end; gap: 20px; height: 200px;">
+                <div class="step" style="height: 120px; background: #bdc3c7; order: 1;"><span>🥈</span><b id="r2"></b></div>
+                <div class="step" style="height: 170px; background: #f1c40f; order: 2; box-shadow: 0 0 30px #f1c40f;"><span>🥇</span><b id="r1"></b></div>
+                <div class="step" style="height: 90px; background: #cd7f32; order: 3;"><span>🥉</span><b id="r3"></b></div>
+            </div>
+            <p style="margin-top: 25px; font-size: 20px; color: #fff; background: #000; padding: 5px 15px; border-radius: 10px;">VÁN MỚI SẼ BẮT ĐẦU TRONG 2S...</p>
+        </div>
+    </div>
+
+    <div class="history-board">
+        <div class="history-title">📊 KÈO GẦN ĐÂY:</div>
+        <div class="history-list" id="history-container">
+            <div class="history-item" style="color: #666; font-size: 14px; border: none; padding: 0; font-family: 'Nunito', sans-serif;">Chưa có dữ liệu...</div>
+        </div>
+    </div>
+
+    <div class="panel" id="bet-panel">
+        <div style="margin-bottom: 5px;">
+            <button class="duck-btn" onclick="pick(1)">1</button>
+            <button class="duck-btn" onclick="pick(2)">2</button>
+            <button class="duck-btn" onclick="pick(3)">3</button>
+            <button class="duck-btn" onclick="pick(4)">4</button>
+            <button class="duck-btn" onclick="pick(5)">5</button>
+            <button class="duck-btn" onclick="pick(6)">6</button>
+        </div>
+
+        <input type="text" id="bet-amt" class="bet-input" placeholder="MỨC CƯỢC..." readonly>
+        
+        <div class="btn-group">
+            <button class="btn-quick" onclick="add(50000)">+50K</button>
+            <button class="btn-quick" onclick="add(100000)">+100K</button>
+            <button class="btn-quick" onclick="add(500000)">+500K</button>
+            <button class="btn-quick" onclick="add(1000000)">+1M</button>
+            <button class="btn-quick" onclick="add(5000000)">+5M</button>
+            <button class="btn-quick all-in" onclick="allIn()">TẤT TAY</button>
+        </div>
+
+        <div class="action-group">
+            <button class="btn-action btn-confirm" onclick="confirm()">XÁC NHẬN CƯỢC</button>
+            <button class="btn-action btn-cancel" onclick="clearBet()">HỦY CƯỢC</button>
+        </div>
+    </div>
+
+    <audio id="snd" src="https://audio-previews.elements.envatousercontent.com/files/148249604/preview.mp3"></audio>
+    <audio id="whistle-snd" src="https://www.myinstants.com/media/sounds/referee-whistle.mp3"></audio>
+
+    <script>
+        let bal = parseInt(localStorage.getItem('userBalance')) || 0;
+        let time = 30;
+        let state = "BET";
+        let myDuck = null;
+        let myBet = 0;
+        let isConfirmed = false;
+        let toastTimer;
+        let isMuted = false;
+        
+        let matchHistory = JSON.parse(localStorage.getItem('duckHistory')) || [];
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('snd').muted = isMuted;
+            document.getElementById('whistle-snd').muted = isMuted;
+            
+            let muteBtn = document.getElementById('mute-btn');
+            muteBtn.innerText = isMuted ? "🔇" : "🔊";
+            if(isMuted) {
+                muteBtn.classList.add('muted');
+            } else {
+                muteBtn.classList.remove('muted');
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            let t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.color = isError ? "var(--danger)" : "var(--gold)";
+            t.style.borderColor = isError ? "var(--danger)" : "var(--accent-neon)";
+            t.style.display = "block";
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { t.style.display = "none"; }, 2000);
+        }
+
+        function update() {
+            document.getElementById('balance').innerText = "💰 " + bal.toLocaleString();
+            localStorage.setItem('userBalance', bal);
+        }
+
+        function renderHistory() {
+            const hc = document.getElementById('history-container');
+            if(matchHistory.length === 0) return;
+            
+            hc.innerHTML = matchHistory.map(top3 => `
+                <div class="history-item">
+                    <span class="h-t1">${top3[0]}</span><span class="h-sep">-</span><span class="h-t2">${top3[1]}</span><span class="h-sep">-</span><span class="h-t3">${top3[2]}</span>
+                </div>
+            `).join('');
+        }
+
+        function pick(id) {
+            if(state !== "BET") return;
+            myDuck = (myDuck === id) ? null : id;
+            document.querySelectorAll('.duck-btn').forEach((b, i) => b.classList.toggle('selected', (i+1) === myDuck));
+        }
+
+        function add(v) {
+            if(state !== "BET") return;
+            if(myBet + v > bal) { showToast("KHÔNG ĐỦ LÚA!", true); return; }
+            myBet += v;
+            document.getElementById('bet-amt').value = myBet.toLocaleString();
+        }
+
+        function allIn() { if(state !== "BET") return; myBet = bal; document.getElementById('bet-amt').value = myBet.toLocaleString(); }
+
+        function clearBet() {
+            if(state !== "BET") return;
+            myBet = 0; myDuck = null; isConfirmed = false;
+            document.getElementById('bet-amt').value = "";
+            document.querySelectorAll('.duck-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        function confirm() {
+            if(!myDuck || myBet <= 0) { showToast("VUI LÒNG CHỌN VỊT VÀ CƯỢC!", true); return; }
+            isConfirmed = true;
+            document.getElementById('bet-panel').classList.add('disabled');
+            let st = document.getElementById('status');
+            st.innerText = "ĐÃ ĐẶT VỊT SỐ " + myDuck;
+            st.style.color = "var(--gold)";
+            showToast("ĐẶT CƯỢC THÀNH CÔNG!");
+        }
+
+        function createDucks() {
+            const lanes = document.getElementById('lanes');
+            lanes.innerHTML = '';
+            for(let i=1; i<=6; i++) {
+                lanes.innerHTML += `<div class="river-lane"><div class="duck" id="d-${i}" style="left:10px;"><div class="duck-id">${i}</div>🦆</div></div>`;
+            }
+        }
+
+        setInterval(() => {
+            if(time > 0) {
+                time--;
+                document.getElementById('timer').innerText = time + "s";
+                if(state === "BET" && time <= 0) {
+                    if (!isConfirmed) {
+                        myBet = 0;
+                        myDuck = null;
+                    }
+                    
+                    state = "WAITING_SOUND";
+                    let st = document.getElementById('status');
+                    st.innerText = "CHUẨN BỊ...";
+                    st.style.color = "var(--danger)";
+                    
+                    let whistle = document.getElementById('whistle-snd');
+                    let playPromise = whistle.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            whistle.onended = () => {
+                                state = "RACE"; time = 15;
+                                startRace();
+                            };
+                        }).catch(error => {
+                            state = "RACE"; time = 15;
+                            startRace();
+                        });
+                    } else {
+                        whistle.onended = () => {
+                            state = "RACE"; time = 15;
+                            startRace();
+                        };
+                    }
+                }
+            }
+        }, 1000);
+
+        function startRace() {
+            let wins = [];
+            let pos = [10, 10, 10, 10, 10, 10];
+            let st = document.getElementById('status');
+            st.innerText = "CUỘC ĐUA ĐANG DIỄN RA!";
+            st.style.color = "var(--accent-neon)";
+            document.getElementById('bet-panel').classList.add('disabled');
+            
+            let trackWidth = document.getElementById('track').offsetWidth;
+            let finishPoint = trackWidth - 70;
+
+            let loop = setInterval(() => {
+                for(let i=1; i<=6; i++) {
+                    if(pos[i-1] < finishPoint) {
+                        let move = Math.random() * 1.5 + 2.0;
+                        let chance = Math.random();
+                        if(chance < 0.015) move += 12;
+                        
+                        pos[i-1] += move;
+                        document.getElementById(`d-${i}`).style.left = pos[i-1] + "px";
+                    } else if(!wins.includes(i)) {
+                        wins.push(i);
+                    }
+                }
+                
+                if(wins.length >= 6) {
+                    clearInterval(loop);
+                    time = 0;
+                    showWin(wins.slice(0,3));
+                }
+            }, 40);
+        }
+
+        function showWin(top3) {
+            const p = document.getElementById('podium');
+            const msg = document.getElementById('res-msg');
+            document.getElementById('r1').innerText = top3[0];
+            document.getElementById('r2').innerText = top3[1];
+            document.getElementById('r3').innerText = top3[2];
+            
+            p.style.display = "flex";
+            document.getElementById('snd').play().catch(e => {});
+
+            // ĐẨY TRẬN MỚI LÊN ĐẦU, ĐÔN TRẬN CŨ VỀ SAU
+            matchHistory.unshift(top3);
+            if(matchHistory.length > 6) matchHistory.pop();
+            localStorage.setItem('duckHistory', JSON.stringify(matchHistory));
+            renderHistory();
+
+            if(myBet > 0 && isConfirmed) {
+                if(top3.includes(myDuck)) {
+                    let winAmt = myBet * 2;
+                    bal += winAmt;
+                    msg.innerText = "THẮNG LỚN (TOP " + (top3.indexOf(myDuck)+1) + "): +" + winAmt.toLocaleString();
+                    msg.style.color = "var(--success)";
+                } else {
+                    bal -= myBet;
+                    msg.innerText = "BẠN ĐĐ THUA (TOP 4-6)";
+                    msg.style.color = "var(--danger)";
+                }
+                update();
+            } else {
+                msg.innerText = "KẾT QUẢ CUỘC ĐUA";
+                msg.style.color = "#fff";
+            }
+
+            setTimeout(() => {
+                p.style.display = "none";
+                state = "BET"; time = 30;
+                isConfirmed = false;
+                clearBet();
+                document.getElementById('bet-panel').classList.remove('disabled');
+                let st = document.getElementById('status');
+                st.innerText = "MỜI ĐẶT CƯỢC";
+                st.style.color = "var(--accent-neon)";
+                createDucks();
+            }, 2000);
+        }
+
+        createDucks();
+        update();
+        renderHistory();
+    </script>
+</body>
+</html>
