@@ -1,575 +1,459 @@
+Chào bạn, để biến giao diện "Trung Tâm Giải Trí" mang phong cách hoàng gia, quý tộc và sang trọng (Aristocratic & Luxury Casino), tôi đã thay đổi lại toàn bộ triết lý thiết kế:
+
+* **Màu sắc:** Sử dụng tông màu **Đỏ Nhung (Velvet Burgundy)** và **Đen Tuyền (Onyx Black)** làm nền để tạo chiều sâu. Điểm xuyết bằng các đường nét **Vàng Kim (Metallic Gold)** để mang lại cảm giác giàu có, quyền lực.
+* **Phông chữ:** Chuyển sang sử dụng `Playfair Display` cho các tiêu đề mang nét cổ điển, thanh lịch và `Cinzel` cho các con số để tạo cảm giác vương giả.
+* **Hình khối & Hiệu ứng:** Lược bỏ các góc bo tròn quá mềm mại hoặc hiệu ứng neon chói lóa. Thay vào đó là các đường viền sắc nét, độ bóng (shadow) mượt mà và các dải màu gradient vàng kim (gold foil).
+
+Dưới đây là đoạn mã đã được nâng cấp hoàn toàn dựa trên cấu trúc ban đầu của bạn. Bạn chỉ cần copy và chạy lại tệp HTML:
+
+### Mã Nguồn: Giao Diện Quý Tộc
+
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baccarat Classic Casino</title>
+    <title>Trung Tâm Giải Trí Thượng Lưu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --table-red: #c1272d;
-            --table-dark-red: #8a161b;
-            --gold: #f9d976;
-            --gold-dark: #c5a059;
-            --text-light: #ffffff;
-            --chip-10: #4a90e2;
-            --chip-20: #50e3c2;
-            --chip-50: #b8e986;
-            --chip-100: #d0021b;
+            --bg-dark: #0a0202;
+            --bg-red: #2a0808;
+            --card-bg: #170505;
+            --gold-primary: #d4af37;
+            --gold-light: #fdf5a9;
+            --gold-dark: #aa771c;
+            --text-light: #f4ede4;
+            --danger-red: #8b0000;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #111;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, var(--bg-red) 0%, var(--bg-dark) 80%);
+            color: var(--text-light);
+            display: flex; 
+            flex-direction: column; 
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 30px 20px; 
+            box-sizing: border-box;
             user-select: none;
+            overflow-x: hidden;
         }
 
-        .game-container {
-            width: 1000px;
-            height: 600px;
-            background: radial-gradient(ellipse at center, var(--table-red) 0%, var(--table-dark-red) 100%);
+        /* Dải phân cách vàng */
+        .gold-divider {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            margin: -10px auto 30px auto;
+        }
+
+        .navbar {
+            width: 100%; 
+            max-width: 1100px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 20px 40px; 
+            background: rgba(20, 5, 5, 0.85);
+            border: 1px solid var(--gold-dark); 
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(212, 175, 55, 0.1); 
+            box-sizing: border-box;
+            margin-bottom: 30px;
             position: relative;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            border: 5px solid var(--gold-dark);
-            overflow: hidden;
         }
 
-        /* Cong viền bàn ở dưới */
-        .table-edge {
+        .navbar::before {
+            content: '';
             position: absolute;
-            bottom: -50px;
-            left: -5%;
-            width: 110%;
-            height: 150px;
-            background: linear-gradient(to bottom, #d4af37, #8b6914);
-            border-radius: 50% 50% 0 0;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5);
-            z-index: 1;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
             pointer-events: none;
         }
 
-        /* Top Bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
+        .logo-text { 
+            font-family: 'Cinzel', serif;
+            font-size: 28px; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            background: linear-gradient(to right, var(--gold-dark), var(--gold-light), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
+            font-weight: 800;
+        }
+
+        .balance-box { 
+            color: var(--gold-light); 
+            font-size: 26px; 
+            font-weight: bold; 
+            font-family: 'Cinzel', serif; 
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 25px; 
+            border-radius: 5px; 
+            border: 1px solid var(--gold-primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        .slogan { 
+            font-size: 22px; 
+            color: var(--gold-primary); 
+            margin-bottom: 10px; 
+            font-style: italic; 
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .main-title { 
+            font-family: 'Cinzel', serif;
+            font-size: 32px; 
+            color: var(--text-light); 
+            text-transform: uppercase; 
+            letter-spacing: 6px; 
+            margin-bottom: 40px; 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .game-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px; 
+            width: 100%; 
+            max-width: 1050px; 
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, var(--card-bg), #000000); 
+            border: 1px solid var(--gold-dark);
+            border-radius: 12px; 
+            height: 260px; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center; 
+            text-decoration: none;
+            color: var(--text-light); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            padding-top: 35px; 
+            padding-bottom: 25px; 
+            box-sizing: border-box;
             position: relative;
-            z-index: 10;
+            overflow: hidden;
         }
 
-        .balance-box {
-            background: linear-gradient(to bottom, #ffe47a, #c5a059);
-            padding: 5px 20px;
-            border-radius: 5px;
-            border: 2px solid #fff;
-            color: #000;
-            font-weight: bold;
-            font-size: 1.5rem;
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            opacity: 0.3;
+        }
+
+        .game-card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--gold-light); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .game-icon { 
+            height: 80px; 
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-
-        .chip-tray {
-            display: flex;
-            gap: 10px;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid var(--gold-dark);
-        }
-
-        .chip {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
             justify-content: center;
+            font-size: 70px; 
+            margin-bottom: 20px; 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.8));
+        }
+
+        .game-name { 
+            height: 35px; 
+            display: flex;
             align-items: center;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            border: 4px dashed rgba(255,255,255,0.6);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            transition: transform 0.1s;
+            justify-content: center;
+            font-size: 22px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            white-space: nowrap; 
+            font-weight: 700;
+            color: var(--gold-primary);
         }
 
-        .chip.selected {
-            transform: scale(1.15) translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.6);
-            border-color: #fff;
+        .play-btn { 
+            margin-top: auto; 
+            padding: 10px 30px; 
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            color: #000; 
+            border-radius: 4px; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            opacity: 0; 
+            transition: 0.4s; 
+            font-weight: bold; 
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        .chip-10 { background-color: var(--chip-10); }
-        .chip-20 { background-color: var(--chip-20); }
-        .chip-50 { background-color: var(--chip-50); }
-        .chip-100 { background-color: var(--chip-100); }
-
-        /* History Panel */
-        .history-panel {
-            position: absolute;
-            right: 20px;
-            top: 100px;
-            width: 120px;
-            background: #222;
-            border: 3px solid var(--gold-dark);
-            border-radius: 5px;
-            padding: 5px;
-            color: white;
-            z-index: 10;
+        .game-card:hover .play-btn { 
+            opacity: 1; 
+            transform: translateY(-5px);
         }
 
-        .history-title {
-            text-align: center;
-            color: var(--gold);
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #555;
-            padding-bottom: 5px;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .history-item {
-            background: #333;
-            padding: 2px;
-        }
-
-        /* Play Area */
-        .play-area {
-            position: absolute;
-            top: 120px;
+        .btn-reset-container { 
+            margin-top: 60px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            position: relative;
             width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 150px;
-            z-index: 10;
+            max-width: 700px; 
         }
-
-        .side {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .cards-container {
-            display: flex;
-            gap: 5px;
-            min-height: 120px;
-        }
-
-        .card {
-            width: 80px;
-            height: 115px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 5px;
+        
+        .btn-reset {
+            background: linear-gradient(145deg, #4a0404, var(--danger-red)); 
+            color: var(--gold-light); 
+            border: 1px solid var(--gold-primary);
+            padding: 15px 50px; 
+            font-size: 20px; 
+            font-family: 'Cinzel', serif; 
             font-weight: bold;
-            font-size: 1.5rem;
-            color: black;
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+            letter-spacing: 3px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
         }
 
-        .card.red { color: #d0021b; }
-
-        .score-badge {
-            background: #111;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 5px;
-            border: 2px solid #555;
-            font-size: 1.2rem;
-            margin-top: -15px;
-            z-index: 2;
+        .btn-reset:hover {
+            background: linear-gradient(145deg, var(--danger-red), #ff0000);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
         }
 
-        .side-label {
-            margin-top: 15px;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 5px 20px;
-            border-radius: 5px;
-            color: white;
-            font-size: 1rem;
+        .btn-reset.disabled { 
+            background: #2a2a2a !important; 
+            color: #777 !important; 
+            border-color: #444 !important; 
+            box-shadow: none !important; 
+            cursor: not-allowed; 
+            transform: none;
+        }
+
+        #cooldown-timer { 
+            display: block; 
+            font-size: 15px; 
+            color: var(--gold-dark); 
+            margin-top: 12px; 
+            font-family: 'Cinzel', serif; 
+            letter-spacing: 1px;
+        }
+
+        .btn-chuyen-sinh {
+            position: absolute; 
+            right: 0; 
+            bottom: 0;
+            background: transparent; 
+            color: rgba(212, 175, 55, 0.5); 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            padding: 6px 15px; 
+            font-size: 12px; 
+            border-radius: 4px; 
+            cursor: pointer;
+            text-transform: uppercase; 
+            font-family: 'Cinzel', serif; 
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .btn-chuyen-sinh:hover { 
+            color: var(--gold-light); 
+            border-color: var(--gold-light); 
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Modal & Hiệu ứng */
+        .custom-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; backdrop-filter: blur(5px); }
+        .custom-modal.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-content { 
+            background: #110303; 
+            border: 2px solid var(--gold-primary); 
+            padding: 50px; 
+            border-radius: 12px; 
+            text-align: center; 
+            max-width: 650px; 
+            transform: scale(0.9); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            position: relative;
+        }
+        
+        .custom-modal.active .modal-content { transform: scale(1); }
+        .modal-text { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--text-light); margin-bottom: 35px; line-height: 1.6; }
+        
+        .modal-btn { 
+            background: #222; 
+            color: var(--text-light); 
+            border: 1px solid var(--gold-dark); 
+            padding: 12px 30px; 
+            border-radius: 4px; 
+            font-family: 'Cinzel', serif; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin: 0 10px; 
+            transition: 0.3s; 
             letter-spacing: 2px;
         }
-
-        /* Betting Area */
-        .bet-area-container {
-            position: absolute;
-            bottom: 80px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            z-index: 10;
-        }
-
-        .bet-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 215, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.2s;
-        }
-
-        .bet-circle:hover {
-            background: rgba(255, 215, 0, 0.1);
-        }
-
-        .bet-circle.tie {
-            width: 100px;
-            height: 100px;
-            margin-top: 10px;
-        }
-
-        .bet-title { font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
-        .bet-payout { font-size: 0.7rem; color: #ccc; }
-
-        .placed-chips {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: none;
-        }
-
-        .placed-chip {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px dashed rgba(255,255,255,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 0.8rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            margin-top: -30px; /* Overlap effect */
-        }
-        .placed-chip:first-child { margin-top: 0; }
-
-        /* Controls */
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            z-index: 10;
-        }
-
-        button.action-btn {
-            background: linear-gradient(to bottom, #f9d976, #c5a059);
-            border: 2px solid #fff;
-            padding: 10px 40px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-
-        button.action-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Overlay Notification */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .overlay-content {
-            background: linear-gradient(to bottom, #d4af37, #8b6914);
-            padding: 40px 80px;
-            border-radius: 15px;
-            border: 4px solid #fff;
-            text-align: center;
-            color: #fff;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .overlay.active .overlay-content {
-            transform: scale(1);
-        }
-
-        .overlay-title { font-size: 3rem; font-weight: bold; text-shadow: 2px 2px 5px #000; margin: 0; }
-        .overlay-sub { font-size: 1.5rem; margin-top: 10px; text-shadow: 1px 1px 3px #000; }
-        .overlay-hint { font-size: 1rem; color: #eee; margin-top: 30px; font-style: italic; opacity: 0.8;}
-
+        
+        .modal-btn:hover { background: rgba(212, 175, 55, 0.2); border-color: var(--gold-light); }
+        
+        .shake-earthquake { animation: earthquake 0.15s infinite !important; }
+        @keyframes earthquake { 0%, 100% { transform: translate(0,0) scale(1); } 25% { transform: translate(4px,4px) scale(1.02); } 50% { transform: translate(-4px, -4px) scale(0.98); } 75% { transform: translate(4px, -4px) scale(1.01); } }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <div class="table-edge"></div>
-
-    <div class="top-bar">
-        <div class="balance-box">
-            $<span id="balance">1000</span>
-        </div>
-        <div class="chip-tray">
-            <div class="chip chip-10 selected" onclick="selectChip(10, this)">10</div>
-            <div class="chip chip-20" onclick="selectChip(20, this)">20</div>
-            <div class="chip chip-50" onclick="selectChip(50, this)">50</div>
-            <div class="chip chip-100" onclick="selectChip(100, this)">100</div>
-        </div>
-        <div style="width: 100px;"></div> </div>
-
-    <div class="history-panel">
-        <div class="history-title">HISTORY</div>
-        <div class="history-grid" id="history-grid">
-            </div>
+    <div class="navbar">
+        <div class="logo-text">Trung Tâm Giải Trí</div>
+        <div class="balance-box" id="global-balance">💰 5,000,000</div>
     </div>
 
-    <div class="play-area">
-        <div class="side">
-            <div class="cards-container" id="player-cards"></div>
-            <div class="score-badge" id="player-score">0</div>
-            <div class="side-label">PLAYER</div>
-        </div>
-        <div class="side">
-            <div class="cards-container" id="banker-cards"></div>
-            <div class="score-badge" id="banker-score">0</div>
-            <div class="side-label">BANKER</div>
-        </div>
+    <div class="slogan">"Đẳng cấp của sự tinh tế"</div>
+    <div class="gold-divider"></div>
+    <div class="main-title">Tuyển Tập Trò Chơi</div>
+
+    <div class="game-grid">
+        <a href="taixiu.html" class="game-card">
+            <div class="game-icon">🎲</div>
+            <div class="game-name">Tài Xỉu</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="oantuti.html" class="game-card">
+            <div class="game-icon" style="font-size: 60px;">✌️✊🖐️</div>
+            <div class="game-name">Oản Tù Tì</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="duavit.html" class="game-card">
+            <div class="game-icon">🦆</div>
+            <div class="game-name">Đua Vịt</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="tenlua.html" class="game-card">
+            <div class="game-icon">🚀</div>
+            <div class="game-name">Tên Lửa</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="baucua.html" class="game-card">
+            <div class="game-icon" style="font-size: 50px;">🍐🦀🦐🐟</div> 
+            <div class="game-name">Bầu Cua Tôm Cá</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="farm.html" class="game-card" id="card-farm">
+            <div class="game-icon">🌾</div>
+            <div class="game-name">Đi Mần</div> <div class="play-btn">Quản Lý Trang Trại</div>
+        </a>
+        <a href="baccarat.html" class="game-card">
+            <div class="game-icon" style="font-size: 70px;">🃏</div>
+            <div class="game-name">Baccarat</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="xocdia.html" class="game-card">
+            <div class="game-icon">🥣</div>
+            <div class="game-name">Xóc Đĩa</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
+        <a href="banca.html" class="game-card">
+            <div class="game-icon">🐟</div>
+            <div class="game-name">Bắn Cá</div> <div class="play-btn">Thưởng Thức</div>
+        </a>
     </div>
 
-    <div class="bet-area-container">
-        <div class="bet-circle" onclick="placeBet('Player')">
-            <div class="bet-title">PLAYER</div>
-            <div class="placed-chips" id="chips-Player"></div>
-        </div>
-        <div class="bet-circle tie" onclick="placeBet('Tie')">
-            <div class="bet-title">TIE</div>
-            <div class="bet-payout">PAYS 8 TO 1</div>
-            <div class="placed-chips" id="chips-Tie"></div>
-        </div>
-        <div class="bet-circle" onclick="placeBet('Banker')">
-            <div class="bet-title">BANKER</div>
-            <div class="placed-chips" id="chips-Banker"></div>
-        </div>
+    <div class="btn-reset-container">
+        <button id="bocBatHoBtn" class="btn-reset" onclick="handleBocBatHo()">Hỗ Trợ Tài Chính</button>
+        <span id="cooldown-timer"></span>
+        <button class="btn-chuyen-sinh" onclick="showChuyenSinhStep1()">Làm Lại Từ Đầu</button>
     </div>
 
-    <div class="controls">
-        <button class="action-btn" onclick="clearBets()">Xóa Cược</button>
-        <button class="action-btn" onclick="dealCards()">Chia Bài (DEAL)</button>
+    <div id="custom-modal" class="custom-modal">
+        <div class="modal-content">
+            <div id="modal-text" class="modal-text">Nội dung</div>
+            <div id="modal-buttons" style="display: flex; justify-content: center; gap: 15px;"></div>
+        </div>
     </div>
-</div>
-
-<div class="overlay" id="result-overlay" onclick="closeOverlay()">
-    <div class="overlay-content">
-        <h1 class="overlay-title" id="overlay-title">PLAYER WINS</h1>
-        <div class="overlay-sub" id="overlay-sub">+ 50</div>
-        <div class="overlay-hint">(Bấm bất kỳ đâu để tiếp tục)</div>
-    </div>
-</div>
 
 <script>
-    let balance = 1000;
-    let selectedChipValue = 10;
-    let bets = { Player: 0, Banker: 0, Tie: 0 };
-    let history = [];
+    const COOLDOWN_TIME = 30 * 60 * 1000; 
+    let cooldownInterval;
 
-    function selectChip(value, element) {
-        selectedChipValue = value;
-        document.querySelectorAll('.chip-tray .chip').forEach(c => c.classList.remove('selected'));
-        element.classList.add('selected');
-    }
-
-    function placeBet(zone) {
-        if (balance < selectedChipValue) {
-            showOverlay("KHÔNG ĐỦ TIỀN", "Vui lòng kiểm tra lại số dư");
-            return;
+    function refreshBalance() {
+        let savedBalance = localStorage.getItem('userBalance');
+        if (savedBalance === null || isNaN(savedBalance)) {
+            localStorage.setItem('userBalance', 5000000);
+            savedBalance = 5000000;
         }
-
-        balance -= selectedChipValue;
-        bets[zone] += selectedChipValue;
-        updateUI();
-
-        // Thêm chip vào vòng tròn
-        const chipDiv = document.createElement('div');
-        chipDiv.className = `placed-chip chip-${selectedChipValue}`;
-        chipDiv.innerText = selectedChipValue;
-        chipDiv.style.backgroundColor = getComputedStyle(document.querySelector(`.chip-${selectedChipValue}`)).backgroundColor;
-        document.getElementById(`chips-${zone}`).appendChild(chipDiv);
+        document.getElementById('global-balance').innerText = "💰 " + parseInt(savedBalance).toLocaleString();
     }
 
-    function clearBets() {
-        balance += (bets.Player + bets.Banker + bets.Tie);
-        bets = { Player: 0, Banker: 0, Tie: 0 };
-        document.getElementById('chips-Player').innerHTML = '';
-        document.getElementById('chips-Banker').innerHTML = '';
-        document.getElementById('chips-Tie').innerHTML = '';
-        updateUI();
+    function updateCooldownUI() {
+        let lastTime = localStorage.getItem('lastBocBatHoTime');
+        let btn = document.getElementById('bocBatHoBtn');
+        let timerEl = document.getElementById('cooldown-timer');
+        if (lastTime) {
+            let timePassed = Date.now() - parseInt(lastTime);
+            if (timePassed < COOLDOWN_TIME) {
+                btn.classList.add('disabled'); btn.disabled = true;
+                let timeLeft = COOLDOWN_TIME - timePassed;
+                let m = Math.floor(timeLeft / 60000);
+                let s = Math.floor((timeLeft % 60000) / 1000);
+                timerEl.innerText = `Quý khách vui lòng chờ ${m} phút ${s} giây để tiếp tục...`;
+                return true;
+            }
+        }
+        btn.classList.remove('disabled'); btn.disabled = false;
+        timerEl.innerText = "";
+        return false;
     }
 
-    function updateUI() {
-        document.getElementById('balance').innerText = balance;
+    function handleBocBatHo() {
+        if (updateCooldownUI()) return;
+        let currentBalance = parseInt(localStorage.getItem('userBalance')) || 0;
+        localStorage.setItem('userBalance', currentBalance + 5000000);
+        localStorage.setItem('lastBocBatHoTime', Date.now());
+        refreshBalance();
+        updateCooldownUI();
+        clearInterval(cooldownInterval);
+        cooldownInterval = setInterval(updateCooldownUI, 1000);
     }
 
-    function getRandomCard() {
-        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-        const suits = ['♠', '♥', '♦', '♣'];
-        const val = values[Math.floor(Math.random() * values.length)];
-        const suit = suits[Math.floor(Math.random() * suits.length)];
-        let numVal = 0;
-        if (val === 'A') numVal = 1;
-        else if (['10', 'J', 'Q', 'K'].includes(val)) numVal = 0;
-        else numVal = parseInt(val);
-
-        return { text: val, suit: suit, value: numVal, isRed: (suit === '♥' || suit === '♦') };
-    }
-
-    function renderCard(card) {
-        return `
-            <div class="card ${card.isRed ? 'red' : ''}">
-                <div>${card.text}<br>${card.suit}</div>
-            </div>
+    function showChuyenSinhStep1() {
+        const modal = document.getElementById('custom-modal');
+        document.getElementById('modal-text').innerHTML = "Quý khách có chắc chắn muốn thiết lập lại tài sản về 5,000,000?";
+        const btnArea = document.getElementById('modal-buttons');
+        btnArea.innerHTML = `
+            <button class="modal-btn" style="background: linear-gradient(145deg, #4a0404, #8b0000); color: #fdf5a9; border: 1px solid #d4af37;" onclick="thucHienChuyenSinh()">Xác Nhận</button>
+            <button class="modal-btn" onclick="document.getElementById('custom-modal').classList.remove('active')">Từ Chối</button>
         `;
+        modal.classList.add('active');
     }
 
-    function calculateScore(cards) {
-        return cards.reduce((sum, c) => sum + c.value, 0) % 10;
-    }
-
-    function dealCards() {
-        if (bets.Player === 0 && bets.Banker === 0 && bets.Tie === 0) {
-            showOverlay("CHƯA ĐẶT CƯỢC", "Vui lòng chọn chip và đặt cược");
-            return;
-        }
-
-        let pCards = [getRandomCard(), getRandomCard()];
-        let bCards = [getRandomCard(), getRandomCard()];
-
-        // Luật rút lá thứ 3 cơ bản
-        let pScore = calculateScore(pCards);
-        let bScore = calculateScore(bCards);
-
-        if (pScore <= 5 && bScore < 8) pCards.push(getRandomCard());
-        pScore = calculateScore(pCards); // Tính lại điểm Player nếu rút
-
-        if (bScore <= 5 && pScore < 8) bCards.push(getRandomCard());
-        bScore = calculateScore(bCards); // Tính lại điểm Banker
-
-        // Hiển thị bài
-        document.getElementById('player-cards').innerHTML = pCards.map(renderCard).join('');
-        document.getElementById('banker-cards').innerHTML = bCards.map(renderCard).join('');
-        
-        document.getElementById('player-score').innerText = pScore;
-        document.getElementById('banker-score').innerText = bScore;
-
-        // Tính kết quả
-        let result = "";
-        let totalWin = 0;
-
-        if (pScore > bScore) {
-            result = "PLAYER";
-            if (bets.Player > 0) totalWin += bets.Player * 2;
-        } else if (bScore > pScore) {
-            result = "BANKER";
-            if (bets.Banker > 0) totalWin += bets.Banker * 2;
-        } else {
-            result = "TIE";
-            if (bets.Tie > 0) totalWin += bets.Tie * 9; // Trả lại vốn + x8
-            if (bets.Player > 0) totalWin += bets.Player; // Hoàn tiền
-            if (bets.Banker > 0) totalWin += bets.Banker; // Hoàn tiền
-        }
-
-        // Cập nhật Lịch sử
-        history.push({ p: pScore, b: bScore });
-        if (history.length > 5) history.shift();
-        renderHistory();
-
-        // Xử lý thông báo Overlay
+    function thucHienChuyenSinh() {
+        localStorage.setItem('userBalance', 5000000);
+        refreshBalance();
+        document.querySelector('.modal-content').classList.add('shake-earthquake');
         setTimeout(() => {
-            let msgTitle = result === "TIE" ? "HÒA (TIE)" : `${result} THẮNG`;
-            let msgSub = totalWin > 0 ? `Bạn thắng: +$${totalWin}` : "Bạn không thắng cược này";
-            
-            balance += totalWin;
-            updateUI();
-            showOverlay(msgTitle, msgSub);
-        }, 1000); // Đợi 1 giây xem bài rồi hiện thông báo
+            document.querySelector('.modal-content').classList.remove('shake-earthquake');
+            document.getElementById('custom-modal').classList.remove('active');
+        }, 1000);
     }
 
-    function renderHistory() {
-        const grid = document.getElementById('history-grid');
-        grid.innerHTML = '';
-        history.forEach(h => {
-            grid.innerHTML += `<div class="history-item">${h.p}</div><div class="history-item">${h.b}</div>`;
-        });
-    }
-
-    // --- Hệ thống Overlay ---
-    const overlay = document.getElementById('result-overlay');
-    function showOverlay(title, sub) {
-        document.getElementById('overlay-title').innerText = title;
-        document.getElementById('overlay-sub').innerText = sub;
-        overlay.classList.add('active');
-    }
-
-    function closeOverlay() {
-        if (!overlay.classList.contains('active')) return;
-        overlay.classList.remove('active');
-        
-        // Reset bàn chơi
-        document.getElementById('player-cards').innerHTML = '';
-        document.getElementById('banker-cards').innerHTML = '';
-        document.getElementById('player-score').innerText = '0';
-        document.getElementById('banker-score').innerText = '0';
-        bets = { Player: 0, Banker: 0, Tie: 0 };
-        document.getElementById('chips-Player').innerHTML = '';
-        document.getElementById('chips-Banker').innerHTML = '';
-        document.getElementById('chips-Tie').innerHTML = '';
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        refreshBalance();
+        updateCooldownUI();
+        cooldownInterval = setInterval(updateCooldownUI, 1000);
+    });
 </script>
 </body>
 </html>
+```
