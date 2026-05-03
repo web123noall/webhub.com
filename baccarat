@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baccarat Classic Casino</title>
+    <style>
+        :root {
+            --table-red: #c1272d;
+            --table-dark-red: #8a161b;
+            --gold: #f9d976;
+            --gold-dark: #c5a059;
+            --text-light: #ffffff;
+            --chip-10: #4a90e2;
+            --chip-20: #50e3c2;
+            --chip-50: #b8e986;
+            --chip-100: #d0021b;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .game-container {
+            width: 1000px;
+            height: 600px;
+            background: radial-gradient(ellipse at center, var(--table-red) 0%, var(--table-dark-red) 100%);
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            border: 5px solid var(--gold-dark);
+            overflow: hidden;
+        }
+
+        /* Cong viền bàn ở dưới */
+        .table-edge {
+            position: absolute;
+            bottom: -50px;
+            left: -5%;
+            width: 110%;
+            height: 150px;
+            background: linear-gradient(to bottom, #d4af37, #8b6914);
+            border-radius: 50% 50% 0 0;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .balance-box {
+            background: linear-gradient(to bottom, #ffe47a, #c5a059);
+            padding: 5px 20px;
+            border-radius: 5px;
+            border: 2px solid #fff;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .chip-tray {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--gold-dark);
+        }
+
+        .chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            border: 4px dashed rgba(255,255,255,0.6);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+
+        .chip.selected {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.6);
+            border-color: #fff;
+        }
+
+        .chip-10 { background-color: var(--chip-10); }
+        .chip-20 { background-color: var(--chip-20); }
+        .chip-50 { background-color: var(--chip-50); }
+        .chip-100 { background-color: var(--chip-100); }
+
+        /* History Panel */
+        .history-panel {
+            position: absolute;
+            right: 20px;
+            top: 100px;
+            width: 120px;
+            background: #222;
+            border: 3px solid var(--gold-dark);
+            border-radius: 5px;
+            padding: 5px;
+            color: white;
+            z-index: 10;
+        }
+
+        .history-title {
+            text-align: center;
+            color: var(--gold);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .history-item {
+            background: #333;
+            padding: 2px;
+        }
+
+        /* Play Area */
+        .play-area {
+            position: absolute;
+            top: 120px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 150px;
+            z-index: 10;
+        }
+
+        .side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 5px;
+            min-height: 120px;
+        }
+
+        .card {
+            width: 80px;
+            height: 115px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: black;
+        }
+
+        .card.red { color: #d0021b; }
+
+        .score-badge {
+            background: #111;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            border: 2px solid #555;
+            font-size: 1.2rem;
+            margin-top: -15px;
+            z-index: 2;
+        }
+
+        .side-label {
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 5px 20px;
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* Betting Area */
+        .bet-area-container {
+            position: absolute;
+            bottom: 80px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            z-index: 10;
+        }
+
+        .bet-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 215, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .bet-circle:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .bet-circle.tie {
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+        }
+
+        .bet-title { font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+        .bet-payout { font-size: 0.7rem; color: #ccc; }
+
+        .placed-chips {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .placed-chip {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            margin-top: -30px; /* Overlap effect */
+        }
+        .placed-chip:first-child { margin-top: 0; }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        button.action-btn {
+            background: linear-gradient(to bottom, #f9d976, #c5a059);
+            border: 2px solid #fff;
+            padding: 10px 40px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        button.action-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Overlay Notification */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .overlay-content {
+            background: linear-gradient(to bottom, #d4af37, #8b6914);
+            padding: 40px 80px;
+            border-radius: 15px;
+            border: 4px solid #fff;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .overlay.active .overlay-content {
+            transform: scale(1);
+        }
+
+        .overlay-title { font-size: 3rem; font-weight: bold; text-shadow: 2px 2px 5px #000; margin: 0; }
+        .overlay-sub { font-size: 1.5rem; margin-top: 10px; text-shadow: 1px 1px 3px #000; }
+        .overlay-hint { font-size: 1rem; color: #eee; margin-top: 30px; font-style: italic; opacity: 0.8;}
+
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="table-edge"></div>
+
+    <div class="top-bar">
+        <div class="balance-box">
+            $<span id="balance">1000</span>
+        </div>
+        <div class="chip-tray">
+            <div class="chip chip-10 selected" onclick="selectChip(10, this)">10</div>
+            <div class="chip chip-20" onclick="selectChip(20, this)">20</div>
+            <div class="chip chip-50" onclick="selectChip(50, this)">50</div>
+            <div class="chip chip-100" onclick="selectChip(100, this)">100</div>
+        </div>
+        <div style="width: 100px;"></div> </div>
+
+    <div class="history-panel">
+        <div class="history-title">HISTORY</div>
+        <div class="history-grid" id="history-grid">
+            </div>
+    </div>
+
+    <div class="play-area">
+        <div class="side">
+            <div class="cards-container" id="player-cards"></div>
+            <div class="score-badge" id="player-score">0</div>
+            <div class="side-label">PLAYER</div>
+        </div>
+        <div class="side">
+            <div class="cards-container" id="banker-cards"></div>
+            <div class="score-badge" id="banker-score">0</div>
+            <div class="side-label">BANKER</div>
+        </div>
+    </div>
+
+    <div class="bet-area-container">
+        <div class="bet-circle" onclick="placeBet('Player')">
+            <div class="bet-title">PLAYER</div>
+            <div class="placed-chips" id="chips-Player"></div>
+        </div>
+        <div class="bet-circle tie" onclick="placeBet('Tie')">
+            <div class="bet-title">TIE</div>
+            <div class="bet-payout">PAYS 8 TO 1</div>
+            <div class="placed-chips" id="chips-Tie"></div>
+        </div>
+        <div class="bet-circle" onclick="placeBet('Banker')">
+            <div class="bet-title">BANKER</div>
+            <div class="placed-chips" id="chips-Banker"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="action-btn" onclick="clearBets()">Xóa Cược</button>
+        <button class="action-btn" onclick="dealCards()">Chia Bài (DEAL)</button>
+    </div>
+</div>
+
+<div class="overlay" id="result-overlay" onclick="closeOverlay()">
+    <div class="overlay-content">
+        <h1 class="overlay-title" id="overlay-title">PLAYER WINS</h1>
+        <div class="overlay-sub" id="overlay-sub">+ 50</div>
+        <div class="overlay-hint">(Bấm bất kỳ đâu để tiếp tục)</div>
+    </div>
+</div>
+
+<script>
+    let balance = 1000;
+    let selectedChipValue = 10;
+    let bets = { Player: 0, Banker: 0, Tie: 0 };
+    let history = [];
+
+    function selectChip(value, element) {
+        selectedChipValue = value;
+        document.querySelectorAll('.chip-tray .chip').forEach(c => c.classList.remove('selected'));
+        element.classList.add('selected');
+    }
+
+    function placeBet(zone) {
+        if (balance < selectedChipValue) {
+            showOverlay("KHÔNG ĐỦ TIỀN", "Vui lòng kiểm tra lại số dư");
+            return;
+        }
+
+        balance -= selectedChipValue;
+        bets[zone] += selectedChipValue;
+        updateUI();
+
+        // Thêm chip vào vòng tròn
+        const chipDiv = document.createElement('div');
+        chipDiv.className = `placed-chip chip-${selectedChipValue}`;
+        chipDiv.innerText = selectedChipValue;
+        chipDiv.style.backgroundColor = getComputedStyle(document.querySelector(`.chip-${selectedChipValue}`)).backgroundColor;
+        document.getElementById(`chips-${zone}`).appendChild(chipDiv);
+    }
+
+    function clearBets() {
+        balance += (bets.Player + bets.Banker + bets.Tie);
+        bets = { Player: 0, Banker: 0, Tie: 0 };
+        document.getElementById('chips-Player').innerHTML = '';
+        document.getElementById('chips-Banker').innerHTML = '';
+        document.getElementById('chips-Tie').innerHTML = '';
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('balance').innerText = balance;
+    }
+
+    function getRandomCard() {
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const suits = ['♠', '♥', '♦', '♣'];
+        const val = values[Math.floor(Math.random() * values.length)];
+        const suit = suits[Math.floor(Math.random() * suits.length)];
+        let numVal = 0;
+        if (val === 'A') numVal = 1;
+        else if (['10', 'J', 'Q', 'K'].includes(val)) numVal = 0;
+        else numVal = parseInt(val);
+
+        return { text: val, suit: suit, value: numVal, isRed: (suit === '♥' || suit === '♦') };
+    }
+
+    function renderCard(card) {
+        return `
+            <div class="card ${card.isRed ? 'red' : ''}">
+                <div>${card.text}<br>${card.suit}</div>
+            </div>
+        `;
+    }
+
+    function calculateScore(cards) {
+        return cards.reduce((sum, c) => sum + c.value, 0) % 10;
+    }
+
+    function dealCards() {
+        if (bets.Player === 0 && bets.Banker === 0 && bets.Tie === 0) {
+            showOverlay("CHƯA ĐẶT CƯỢC", "Vui lòng chọn chip và đặt cược");
+            return;
+        }
+
+        let pCards = [getRandomCard(), getRandomCard()];
+        let bCards = [getRandomCard(), getRandomCard()];
+
+        // Luật rút lá thứ 3 cơ bản
+        let pScore = calculateScore(pCards);
+        let bScore = calculateScore(bCards);
+
+        if (pScore <= 5 && bScore < 8) pCards.push(getRandomCard());
+        pScore = calculateScore(pCards); // Tính lại điểm Player nếu rút
+
+        if (bScore <= 5 && pScore < 8) bCards.push(getRandomCard());
+        bScore = calculateScore(bCards); // Tính lại điểm Banker
+
+        // Hiển thị bài
+        document.getElementById('player-cards').innerHTML = pCards.map(renderCard).join('');
+        document.getElementById('banker-cards').innerHTML = bCards.map(renderCard).join('');
+        
+        document.getElementById('player-score').innerText = pScore;
+        document.getElementById('banker-score').innerText = bScore;
+
+        // Tính kết quả
+        let result = "";
+        let totalWin = 0;
+
+        if (pScore > bScore) {
+            result = "PLAYER";
+            if (bets.Player > 0) totalWin += bets.Player * 2;
+        } else if (bScore > pScore) {
+            result = "BANKER";
+            if (bets.Banker > 0) totalWin += bets.Banker * 2;
+        } else {
+            result = "TIE";
+            if (bets.Tie > 0) totalWin += bets.Tie * 9; // Trả lại vốn + x8
+            if (bets.Player > 0) totalWin += bets.Player; // Hoàn tiền
+            if (bets.Banker > 0) totalWin += bets.Banker; // Hoàn tiền
+        }
+
+        // Cập nhật Lịch sử
+        history.push({ p: pScore, b: bScore });
+        if (history.length > 5) history.shift();
+        renderHistory();
+
+        // Xử lý thông báo Overlay
+        setTimeout(() => {
+            let msgTitle = result === "TIE" ? "HÒA (TIE)" : `${result} THẮNG`;
+            let msgSub = totalWin > 0 ? `Bạn thắng: +$${totalWin}` : "Bạn không thắng cược này";
+            
+            balance += totalWin;
+            updateUI();
+            showOverlay(msgTitle, msgSub);
+        }, 1000); // Đợi 1 giây xem bài rồi hiện thông báo
+    }
+
+    function renderHistory() {
+        const grid = document.getElementById('history-grid');
+        grid.innerHTML = '';
+        history.forEach(h => {
+            grid.innerHTML += `<div class="history-item">${h.p}</div><div class="history-item">${h.b}</div>`;
+        });
+    }
+
+    // --- Hệ thống Overlay ---
+    const overlay = document.getElementById('result-overlay');
+    function showOverlay(title, sub) {
+        document.getElementById('overlay-title').innerText = title;
+        document.getElementById('overlay-sub').innerText = sub;
+        overlay.classList.add('active');
+    }
+
+    function closeOverlay() {
+        if (!overlay.classList.contains('active')) return;
+        overlay.classList.remove('active');
+        
+        // Reset bàn chơi
+        document.getElementById('player-cards').innerHTML = '';
+        document.getElementById('banker-cards').innerHTML = '';
+        document.getElementById('player-score').innerText = '0';
+        document.getElementById('banker-score').innerText = '0';
+        bets = { Player: 0, Banker: 0, Tie: 0 };
+        document.getElementById('chips-Player').innerHTML = '';
+        document.getElementById('chips-Banker').innerHTML = '';
+        document.getElementById('chips-Tie').innerHTML = '';
+    }
+</script>
+</body>
+</html>
