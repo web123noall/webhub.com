@@ -1,371 +1,252 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trung Tâm Giải Trí</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0c1831;
-            --card-bg: #14213d;
-            --accent: #00d2ff;
-            --tai-color: #ff4757;
-            --gold: #f1c40f;
-            --success: #2ecc71;
-        }
-
-        body {
-            font-family: 'Oswald', sans-serif;
-            background-color: var(--bg-color);
-            color: #ffffff;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 20px; 
-            box-sizing: border-box;
-            user-select: none;
-            background-image: radial-gradient(circle at 50% 0%, #14213d 0%, #0c1831 60%);
-            overflow-x: hidden;
-        }
-
-        .navbar {
-            width: 100%; 
-            max-width: 1100px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            padding: 20px 30px; 
-            background: var(--card-bg);
-            border-bottom: 4px solid var(--accent); 
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2); 
-            box-sizing: border-box;
-            margin-bottom: 20px;
-        }
-
-        .logo-text { 
-            font-size: 28px; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            text-shadow: 0 0 10px var(--accent); 
-        }
-
-        .balance-box { 
-            color: var(--gold); 
-            font-size: 28px; 
-            font-weight: bold; 
-            font-family: 'Roboto Mono', monospace; 
-            background: rgba(0,0,0,0.4);
-            padding: 10px 20px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(241, 196, 15, 0.3);
-        }
-
-        .slogan { 
-            font-size: 20px; 
-            color: var(--tai-color); 
-            text-transform: uppercase; 
-            margin-bottom: 30px; 
-            font-style: italic; 
-            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5); 
-        }
-
-        .main-title { 
-            font-size: 36px; 
-            color: var(--accent); 
-            text-transform: uppercase; 
-            letter-spacing: 4px; 
-            margin-bottom: 30px; 
-        }
-
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 35px; 
-            width: 100%; 
-            max-width: 1050px; 
-        }
-
-        /* ----- PHẦN CSS CHỐNG LỆCH CHỮ ----- */
-        .game-card {
-            background: var(--card-bg); 
-            border: 3px solid rgba(0, 210, 255, 0.2);
-            border-radius: 30px; 
-            height: 250px; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: flex-start; /* Canh lề từ trên xuống để không bị đẩy */
-            align-items: center; 
-            text-decoration: none;
-            color: #fff; 
-            transition: all 0.3s ease; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            padding-top: 30px; /* Cố định khoảng cách từ trên xuống */
-            padding-bottom: 25px; /* Cố định khoảng cách nút bấm */
-            box-sizing: border-box;
-        }
-
-        .game-card:hover { 
-            transform: translateY(-10px); 
-            border-color: var(--accent); 
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
-        }
-
-        .game-icon { 
-            height: 80px; /* Khóa cứng chiều cao Icon */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px; 
-            margin-bottom: 15px; 
-        }
-
-        .game-name { 
-            height: 35px; /* Khóa cứng chiều cao Text */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px; /* KÍCH THƯỚC ĐỀU NHAU CHO TẤT CẢ */
-            letter-spacing: 1px; 
-            text-transform: uppercase; 
-            white-space: nowrap; /* Cấm chữ rớt dòng */
-        }
-
-        .play-btn { 
-            margin-top: auto; /* Tự động đẩy nút xuống đáy thẻ cho bằng nhau */
-            padding: 8px 25px; 
-            background: var(--accent); 
-            color: #000; 
-            border-radius: 10px; 
-            font-size: 15px; 
-            text-transform: uppercase; 
-            opacity: 0; 
-            transition: 0.3s; 
-            font-weight: bold; 
-        }
-        /* ----------------------------------- */
-
-        .game-card:hover .play-btn { 
-            opacity: 1; 
-        }
-
-        .btn-reset-container { 
-            margin-top: 50px; 
-            margin-bottom: 20px; 
-            text-align: center; 
-            position: relative;
-            width: 100%;
-            max-width: 700px; 
-        }
-        
-        .btn-reset {
-            background: var(--tai-color); 
-            color: #ffffff; 
-            border: 2px solid #ffffff;
-            padding: 12px 40px; 
-            font-size: 20px; 
-            font-family: 'Oswald', sans-serif; 
-            font-weight: bold;
-            border-radius: 10px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            text-transform: uppercase;
-            letter-spacing: 2px; 
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.6);
-        }
-
-        .btn-reset:hover {
-            filter: brightness(1.2);
-            transform: scale(1.03);
-        }
-
-        .btn-reset.disabled { 
-            background: #555555 !important; 
-            color: #999999 !important; 
-            border-color: #444444 !important; 
-            box-shadow: none !important; 
-            cursor: not-allowed; 
-            transform: none;
-        }
-
-        #cooldown-timer { 
-            display: block; 
-            font-size: 14px; 
-            color: rgba(255,255,255,0.4); 
-            margin-top: 8px; 
-            font-family: 'Roboto Mono', monospace; 
-        }
-
-        .btn-chuyen-sinh {
-            position: absolute; 
-            right: 0; 
-            bottom: 0;
-            background: transparent; 
-            color: rgba(255, 255, 255, 0.3); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 4px 10px; 
-            font-size: 11px; 
-            border-radius: 5px; 
-            cursor: pointer;
-            text-transform: uppercase; 
-            font-family: 'Oswald', sans-serif; 
-            transition: 0.3s;
-        }
-
-        .btn-chuyen-sinh:hover { 
-            color: rgba(255, 255, 255, 0.8); 
-            border-color: rgba(255, 255, 255, 0.6); 
-        }
-
-        /* Modal & Hiệu ứng */
-        .custom-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .custom-modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--card-bg); border: 2px solid var(--tai-color); padding: 50px; border-radius: 20px; text-align: center; max-width: 650px; transform: scale(0.8); transition: transform 0.3s ease; }
-        .custom-modal.active .modal-content { transform: scale(1); }
-        .modal-text { font-size: 26px; color: #fff; margin-bottom: 35px; text-transform: uppercase; line-height: 1.6; }
-        .modal-btn { background: #555; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: bold; cursor: pointer; margin: 0 10px; transition: 0.2s; }
-        .modal-btn:hover { filter: brightness(1.2); }
-        .money-drop { position: fixed; font-size: 40px; z-index: 9999; pointer-events: none; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: explode 1.2s forwards; }
-        @keyframes explode { 0% { opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; } }
-        .shake-earthquake { animation: earthquake 0.15s infinite !important; }
-        @keyframes earthquake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(4px,4px); } 50% { transform: translate(-4px, -4px); } 75% { transform: translate(4px, -4px); } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trung Tâm Giải Trí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-color:#0c1831;--card-bg:#14213d;--accent:#00d2ff;--tai-color:#ff4757;--gold:#f1c40f;--success:#2ecc71}
+body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh;margin:0;padding:20px;box-sizing:border-box;user-select:none;background-image:radial-gradient(circle at 50% 0%,#14213d 0%,#0c1831 60%);overflow-x:hidden}
+.navbar{width:100%;max-width:1100px;display:flex;justify-content:space-between;align-items:center;padding:20px 30px;background:var(--card-bg);border-bottom:4px solid var(--accent);border-radius:20px;box-shadow:0 10px 30px rgba(0,210,255,.2);box-sizing:border-box;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.logo-text{font-size:26px;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 10px var(--accent)}
+.balance-box{color:var(--gold);font-size:24px;font-weight:700;font-family:'Roboto Mono',monospace;background:rgba(0,0,0,.4);padding:10px 20px;border-radius:12px;border:1px solid rgba(241,196,15,.3);display:flex;align-items:center;gap:10px}
+.balance-box svg{width:22px;height:22px;flex:none}
+.slogan{font-size:19px;color:var(--tai-color);text-transform:uppercase;margin:6px 0 26px;font-style:italic;text-shadow:0 0 10px rgba(255,71,87,.5)}
+.main-title{font-size:34px;color:var(--accent);text-transform:uppercase;letter-spacing:4px;margin-bottom:30px;text-shadow:0 0 12px rgba(0,210,255,.4)}
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:35px;width:100%;max-width:1050px}
+.game-card{background:var(--card-bg);border:3px solid rgba(0,210,255,.2);border-radius:30px;height:250px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-decoration:none;color:#fff;transition:all .3s ease;box-shadow:inset 0 0 20px rgba(0,0,0,.5);padding-top:30px;padding-bottom:25px;box-sizing:border-box}
+.game-card:hover{transform:translateY(-10px);border-color:var(--accent);box-shadow:0 0 20px rgba(0,210,255,.4)}
+.game-icon{height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:15px}
+.game-icon svg{width:74px;height:74px;color:var(--accent);filter:drop-shadow(0 0 8px rgba(0,210,255,.35))}
+.game-name{height:35px;display:flex;align-items:center;justify-content:center;font-size:24px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.play-btn{margin-top:auto;padding:8px 25px;background:var(--accent);color:#000;border-radius:10px;font-size:15px;text-transform:uppercase;opacity:0;transition:.3s;font-weight:700;letter-spacing:1px}
+.game-card:hover .play-btn{opacity:1}
+.btn-reset-container{margin-top:50px;margin-bottom:20px;text-align:center;position:relative;width:100%;max-width:700px}
+.btn-reset{background:var(--tai-color);color:#fff;border:2px solid #fff;padding:12px 40px;font-size:20px;font-family:'Oswald',sans-serif;font-weight:bold;border-radius:10px;cursor:pointer;transition:.3s;text-transform:uppercase;letter-spacing:2px;box-shadow:0 0 15px rgba(255,71,87,.6)}
+.btn-reset:hover{filter:brightness(1.2);transform:scale(1.03)}
+.btn-reset.disabled{background:#555!important;color:#999!important;border-color:#444!important;box-shadow:none!important;cursor:not-allowed;transform:none}
+#cooldown-timer{display:block;font-size:14px;color:rgba(255,255,255,.4);margin-top:8px;font-family:'Roboto Mono',monospace}
+.btn-chuyen-sinh{position:absolute;right:0;bottom:0;background:transparent;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:11px;border-radius:5px;cursor:pointer;text-transform:uppercase;font-family:'Oswald',sans-serif;transition:.3s}
+.btn-chuyen-sinh:hover{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.6)}
+.custom-modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.custom-modal.active{opacity:1;pointer-events:auto}
+.modal-content{background:var(--card-bg);border:2px solid var(--tai-color);padding:50px;border-radius:20px;text-align:center;max-width:650px;transform:scale(.8);transition:transform .3s ease}
+.custom-modal.active .modal-content{transform:scale(1)}
+.modal-text{font-size:24px;color:#fff;margin-bottom:35px;text-transform:uppercase;line-height:1.6}
+.modal-btn{background:#555;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:bold;cursor:pointer;margin:0 10px;transition:.2s}
+.modal-btn:hover{filter:brightness(1.2)}
+.shake-earthquake{animation:earthquake .15s infinite!important}
+@keyframes earthquake{0%,100%{transform:translate(0,0)}25%{transform:translate(4px,4px)}50%{transform:translate(-4px,-4px)}75%{transform:translate(4px,-4px)}}
+@media(max-width:900px){.game-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.game-grid{grid-template-columns:1fr}.game-card{height:215px;padding-top:22px}.logo-text{font-size:19px}.balance-box{font-size:18px;padding:8px 16px}}
+</style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo-text">🌍 TRUNG TÂM GIẢI TRÍ</div>
-        <div class="balance-box" id="global-balance">💰 5,000,000</div>
-    </div>
+<!-- Bộ icon SVG dùng chung (một màu cyan cho đồng bộ) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="ic-coin" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9" fill="none" stroke="#f1c40f" stroke-width="2.4"/>
+  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#f1c40f" stroke-width="1.8"/>
+</symbol>
+<symbol id="ic-dice" viewBox="0 0 64 64">
+  <rect x="9" y="9" width="46" height="46" rx="11" fill="none" stroke="currentColor" stroke-width="4"/>
+  <circle cx="22" cy="22" r="4.5" fill="currentColor"/><circle cx="42" cy="42" r="4.5" fill="currentColor"/><circle cx="32" cy="32" r="4.5" fill="currentColor"/>
+</symbol>
+<symbol id="ic-hand" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 33c0 14 6 23 20 23s20-9 20-23"/>
+    <path d="M24 32V14a2.5 2.5 0 0 1 5 0v18"/><path d="M33 32V10a2.5 2.5 0 0 1 5 0v22"/>
+    <path d="M42 32V15a2.5 2.5 0 0 1 5 0v17"/><path d="M51 33V20a2.5 2.5 0 0 1 5 0v13"/>
+    <path d="M20 35c-3-3-8-5-10-1s3 9 10 12"/>
+  </g>
+</symbol>
+<symbol id="ic-duck" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="42" cy="20" r="10"/><path d="M51 17l11 4-11 4"/>
+    <path d="M12 46c0-12 11-19 24-19 11 0 18 6 18 14 0 4-2 7-5 9H17c-3-2-5-3-5-4z"/>
+    <path d="M22 40c4-4 10-4 14 0"/>
+  </g>
+  <circle cx="45" cy="17" r="2.5" fill="currentColor"/>
+</symbol>
+<symbol id="ic-rocket" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 6c7 5 11 14 11 25v13H21V31c0-11 4-20 11-25z"/>
+    <circle cx="32" cy="25" r="6"/>
+    <path d="M21 38l-7 12h9M43 38l7 12h-9"/>
+    <path d="M26 50c0 5 3 9 6 10 3-1 6-5 6-10"/>
+  </g>
+</symbol>
+<symbol id="ic-crab" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 34c0-9 7-15 16-15s16 6 16 15c0 9-7 14-16 14s-16-5-16-14z"/>
+    <path d="M26 20v-7M38 20v-7"/>
+    <path d="M16 30c-7 1-12-3-12-9 0-2 1-4 3-5M16 24c-4 0-7-2-7-6"/>
+    <path d="M48 30c7 1 12-3 12-9 0-2-1-4-3-5M48 24c4 0 7-2 7-6"/>
+    <path d="M18 46l-6 8M50 46l6 8M28 49l-2 8M40 49l2 8"/>
+  </g>
+  <circle cx="26" cy="11" r="2.5" fill="currentColor"/><circle cx="38" cy="11" r="2.5" fill="currentColor"/>
+</symbol>
+<symbol id="ic-wheat" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 56V30"/>
+    <path d="M32 36c-9 0-14-4-14-11 8-1 14 4 14 11z"/><path d="M32 36c9 0 14-4 14-11-8-1-14 4-14 11z"/>
+    <path d="M32 28c-9 0-14-4-14-11 8-1 14 4 14 11z"/><path d="M32 28c9 0 14-4 14-11-8-1-14 4-14 11z"/>
+    <path d="M32 22c-4-6-4-12 0-17 4 5 4 11 0 17z"/>
+  </g>
+</symbol>
+<symbol id="ic-cards" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round">
+    <rect x="13" y="12" width="24" height="34" rx="5" transform="rotate(8 25 29)"/>
+    <rect x="27" y="18" width="24" height="34" rx="5" transform="rotate(-8 39 35)"/>
+  </g>
+  <circle cx="39" cy="34" r="4.5" fill="currentColor" transform="rotate(-8 39 35)"/>
+</symbol>
+<symbol id="ic-slot" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8" y="14" width="46" height="34" rx="6"/><path d="M23 14v34M39 14v34"/>
+    <path d="M54 30l6-7"/><path d="M18 52h28"/>
+  </g>
+  <circle cx="62" cy="20" r="2.5" fill="currentColor"/>
+  <circle cx="15.5" cy="31" r="3" fill="currentColor"/><circle cx="31" cy="31" r="3" fill="currentColor"/><circle cx="46.5" cy="31" r="3" fill="currentColor"/>
+  <circle cx="15.5" cy="23" r="1.7" fill="currentColor"/><circle cx="46.5" cy="39" r="1.7" fill="currentColor"/>
+</symbol>
+<symbol id="ic-lotto" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round">
+    <rect x="13" y="12" width="38" height="40" rx="5"/>
+    <path d="M13 31h38" stroke-dasharray="4 5" stroke-width="3"/>
+  </g>
+  <text x="32" y="44" text-anchor="middle" font-family="'Roboto Mono',monospace" font-weight="700" font-size="11" fill="currentColor">7 8 9</text>
+</symbol>
+</defs></svg>
 
-    <div class="slogan">" Nghiện Là Dở Rồi ! "</div>
-    <div class="main-title">- CHỌN TRÒ CHƠI -</div>
+<div class="navbar">
+  <div class="logo-text">TRUNG TÂM GIẢI TRÍ</div>
+  <div class="balance-box"><svg><use href="#ic-coin"/></svg><span id="global-balance">5.000.000</span></div>
+</div>
 
-    <div class="game-grid">
-        <a href="taixiu.html" class="game-card">
-            <div class="game-icon">🎲</div>
-            <div class="game-name">Tài Xỉu</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="oantuti.html" class="game-card">
-            <div class="game-icon" style="font-size: 60px;">✌️✊🖐️</div>
-            <div class="game-name">Oản Tù Tì</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="duavit.html" class="game-card">
-            <div class="game-icon">🦆</div>
-            <div class="game-name">Đua Vịt</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="tenlua.html" class="game-card">
-            <div class="game-icon">🚀</div>
-            <div class="game-name">Tên Lửa</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="baucua.html" class="game-card">
-            <div class="game-icon" style="font-size: 50px;">🍐🦀🦐🐟</div> 
-            <div class="game-name">Bầu Cua Tôm Cá</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="farm.html" class="game-card" id="card-farm">
-            <div class="game-icon">🌾</div>
-            <div class="game-name">Đi Mần</div> <div class="play-btn">LÀM NÔNG</div>
-        </a>
-        <a href="baccarat.html" class="game-card">
-            <div class="game-icon" style="font-size: 70px;">🃏</div>
-            <div class="game-name">Baccarat</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="xocdia.html" class="game-card">
-            <div class="game-icon">🥣</div>
-            <div class="game-name">Xóc Đĩa</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-        <a href="banca.html" class="game-card">
-            <div class="game-icon">🐟</div>
-            <div class="game-name">Bắn Cá</div> <div class="play-btn">CHƠI NGAY</div>
-        </a>
-    </div>
+<div class="slogan">" Nghiện Là Dở Rồi ! "</div>
+<div class="main-title">- Chọn Trò Chơi -</div>
 
-    <div class="btn-reset-container">
-        <button id="bocBatHoBtn" class="btn-reset" onclick="handleBocBatHo()">[ BỐC BÁT HỌ ]</button>
-        <span id="cooldown-timer"></span>
-        <button class="btn-chuyen-sinh" onclick="showChuyenSinhStep1()">Chuyển Sinh</button>
-    </div>
+<div class="game-grid">
+  <a href="taixiu.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-dice"/></svg></div>
+    <div class="game-name">Tài Xỉu</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="oantuti.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-hand"/></svg></div>
+    <div class="game-name">Oản Tù Tì</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="duavit.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-duck"/></svg></div>
+    <div class="game-name">Đua Vịt</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="tenlua.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-rocket"/></svg></div>
+    <div class="game-name">Tên Lửa</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="baucua.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-crab"/></svg></div>
+    <div class="game-name">Bầu Cua Tôm Cá</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="farm.html" class="game-card" id="card-farm">
+    <div class="game-icon"><svg><use href="#ic-wheat"/></svg></div>
+    <div class="game-name">Đi Mần</div><div class="play-btn">Làm Nông</div>
+  </a>
+  <a href="baccarat.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-cards"/></svg></div>
+    <div class="game-name">Baccarat</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="quayhu.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-slot"/></svg></div>
+    <div class="game-name">Quay Hũ</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+  <a href="xidach.html" class="game-card">
+    <div class="game-icon"><svg><use href="#ic-lotto"/></svg></div>
+    <div class="game-name">XÌ DÁCH</div><div class="play-btn">Chơi Ngay</div>
+  </a>
+</div>
 
-    <div id="custom-modal" class="custom-modal">
-        <div class="modal-content">
-            <div id="modal-text" class="modal-text">Nội dung</div>
-            <div id="modal-buttons" style="display: flex; justify-content: center; gap: 15px;"></div>
-        </div>
-    </div>
+<div class="btn-reset-container">
+  <button id="bocBatHoBtn" class="btn-reset">[ Bốc Bát Họ ]</button>
+  <span id="cooldown-timer"></span>
+  <button id="chuyenSinhBtn" class="btn-chuyen-sinh">Chuyển Sinh</button>
+</div>
+
+<div id="custom-modal" class="custom-modal">
+  <div class="modal-content" id="modal-content">
+    <div id="modal-text" class="modal-text">Nội dung</div>
+    <div id="modal-buttons" style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap"></div>
+  </div>
+</div>
 
 <script>
-    const COOLDOWN_TIME = 30 * 60 * 1000; 
-    let cooldownInterval;
+const COOLDOWN_TIME = 30 * 60 * 1000;
+let cooldownInterval;
 
-    function refreshBalance() {
-        let savedBalance = localStorage.getItem('userBalance');
-        if (savedBalance === null || isNaN(savedBalance)) {
-            localStorage.setItem('userBalance', 5000000);
-            savedBalance = 5000000;
-        }
-        document.getElementById('global-balance').innerText = "💰 " + parseInt(savedBalance).toLocaleString();
+function refreshBalance(){
+  let b = localStorage.getItem('userBalance');
+  if(b === null || isNaN(parseInt(b))){ localStorage.setItem('userBalance', 5000000); b = 5000000; }
+  document.getElementById('global-balance').innerText = parseInt(b).toLocaleString();
+}
+
+function updateCooldownUI(){
+  const last = localStorage.getItem('lastBocBatHoTime');
+  const btn = document.getElementById('bocBatHoBtn'), timer = document.getElementById('cooldown-timer');
+  if(last){
+    const passed = Date.now() - parseInt(last);
+    if(passed < COOLDOWN_TIME){
+      btn.classList.add('disabled'); btn.disabled = true;
+      const left = COOLDOWN_TIME - passed;
+      timer.innerText = `Chờ ${Math.floor(left/60000)} phút ${Math.floor(left%60000/1000)} giây để bốc tiếp...`;
+      return true;
     }
+  }
+  btn.classList.remove('disabled'); btn.disabled = false; timer.innerText = '';
+  return false;
+}
 
-    function updateCooldownUI() {
-        let lastTime = localStorage.getItem('lastBocBatHoTime');
-        let btn = document.getElementById('bocBatHoBtn');
-        let timerEl = document.getElementById('cooldown-timer');
-        if (lastTime) {
-            let timePassed = Date.now() - parseInt(lastTime);
-            if (timePassed < COOLDOWN_TIME) {
-                btn.classList.add('disabled'); btn.disabled = true;
-                let timeLeft = COOLDOWN_TIME - timePassed;
-                let m = Math.floor(timeLeft / 60000);
-                let s = Math.floor((timeLeft % 60000) / 1000);
-                timerEl.innerText = `Chờ ${m} phút ${s} giây để bốc tiếp...`;
-                return true;
-            }
-        }
-        btn.classList.remove('disabled'); btn.disabled = false;
-        timerEl.innerText = "";
-        return false;
-    }
+function handleBocBatHo(){
+  if(updateCooldownUI()) return;
+  const cur = parseInt(localStorage.getItem('userBalance')) || 0;
+  localStorage.setItem('userBalance', cur + 5000000);
+  localStorage.setItem('lastBocBatHoTime', Date.now());
+  refreshBalance(); updateCooldownUI();
+}
 
-    function handleBocBatHo() {
-        if (updateCooldownUI()) return;
-        let currentBalance = parseInt(localStorage.getItem('userBalance')) || 0;
-        localStorage.setItem('userBalance', currentBalance + 5000000);
-        localStorage.setItem('lastBocBatHoTime', Date.now());
-        refreshBalance();
-        updateCooldownUI();
-        clearInterval(cooldownInterval);
-        cooldownInterval = setInterval(updateCooldownUI, 1000);
-    }
+function showChuyenSinhStep1(){
+  document.getElementById('modal-text').innerText = 'RESET TOÀN BỘ TIỀN VỀ 5 TRIỆU?';
+  document.getElementById('modal-buttons').innerHTML =
+    '<button class="modal-btn" style="background:var(--tai-color)" id="btn-cs-ok">Đồng Ý</button>' +
+    '<button class="modal-btn" id="btn-cs-no">Hủy</button>';
+  document.getElementById('custom-modal').classList.add('active');
+  document.getElementById('btn-cs-ok').onclick = thucHienChuyenSinh;
+  document.getElementById('btn-cs-no').onclick = () => document.getElementById('custom-modal').classList.remove('active');
+}
 
-    function showChuyenSinhStep1() {
-        const modal = document.getElementById('custom-modal');
-        document.getElementById('modal-text').innerHTML = "⚠️ RESET TOÀN BỘ TIỀN VỀ 5 TRIỆU?";
-        const btnArea = document.getElementById('modal-buttons');
-        btnArea.innerHTML = `
-            <button class="modal-btn" style="background:var(--tai-color)" onclick="thucHienChuyenSinh()">ĐỒNG Ý</button>
-            <button class="modal-btn" onclick="document.getElementById('custom-modal').classList.remove('active')">HỦY</button>
-        `;
-        modal.classList.add('active');
-    }
+function thucHienChuyenSinh(){
+  localStorage.setItem('userBalance', 5000000);
+  localStorage.removeItem('slotJackpot'); // reset luôn hũ quay
+  refreshBalance();
+  const c = document.getElementById('modal-content');
+  c.classList.add('shake-earthquake');
+  setTimeout(() => {
+    c.classList.remove('shake-earthquake');
+    document.getElementById('custom-modal').classList.remove('active');
+  }, 1000);
+}
 
-    function thucHienChuyenSinh() {
-        localStorage.setItem('userBalance', 5000000);
-        refreshBalance();
-        document.querySelector('.modal-content').classList.add('shake-earthquake');
-        setTimeout(() => {
-            document.querySelector('.modal-content').classList.remove('shake-earthquake');
-            document.getElementById('custom-modal').classList.remove('active');
-        }, 1000);
-    }
+document.getElementById('bocBatHoBtn').addEventListener('click', handleBocBatHo);
+document.getElementById('chuyenSinhBtn').addEventListener('click', showChuyenSinhStep1);
+addEventListener('storage', e => { if(e.key === 'userBalance') refreshBalance(); });
 
-    document.addEventListener("DOMContentLoaded", () => {
-        refreshBalance();
-        updateCooldownUI();
-        cooldownInterval = setInterval(updateCooldownUI, 1000);
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  refreshBalance();
+  updateCooldownUI();
+  cooldownInterval = setInterval(updateCooldownUI, 1000);
+});
 </script>
 </body>
 </html>
