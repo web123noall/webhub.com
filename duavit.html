@@ -1,465 +1,527 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đua Vịt Siêu Rộng - Soi Cầu Chuẩn</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Oswald:wght@700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-navy: #0b1325;
-            --card-bg: #121c2f;
-            --accent-neon: #2bc5f4;
-            --water-blue: #0077be;
-            --gold: #fbc02d;
-            --gold-glow: #f5b041;
-            --danger: #ff4757;
-            --success: #2ecc71;
-            --btn-cyan: #3dc8f5;
-            --btn-yellow: #f1c40f;
-        }
-
-        body {
-            font-family: 'Oswald', sans-serif;
-            background-color: var(--bg-navy);
-            color: #fff; margin: 0; padding: 10px 10px;
-            display: flex; flex-direction: column; align-items: center;
-            font-weight: 900; overflow-x: hidden;
-        }
-
-        /* TĂNG KÍCH THƯỚC BÀN CHƠI LÊN 1725px */
-        .top-info {
-            width: 100%; max-width: 1725px;
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-            border: 2px solid var(--accent-neon);
-            border-radius: 12px; padding: 8px 10px; box-sizing: border-box;
-            background-color: rgba(11, 19, 37, 0.8);
-            box-shadow: 0 0 10px rgba(43, 197, 244, 0.2);
-        }
-        .btn-home {
-            background: #369abf; color: #0b1d2e; text-decoration: none; padding: 6px 15px;
-            border-radius: 8px; font-size: 18px; border: none; font-weight: 900;
-        }
-        .balance {
-            color: var(--gold); font-size: 20px;
-            background: rgba(0,0,0,0.4); padding: 5px 20px; border-radius: 8px;
-            font-family: 'Roboto Mono', monospace;
-        }
-
-        .status-board {
-            width: 100%; max-width: 1725px;
-            display: flex; justify-content: flex-start; align-items: stretch; gap: 10px;
-            margin-bottom: 8px;
-        }
-        
-        /* NÚT LOA MỚI (X2.2 KÍCH THƯỚC) NẰM TRONG STATUS BOARD */
-        .mute-btn {
-            background: rgba(43, 197, 244, 0.1); border: 1px solid var(--accent-neon);
-            color: #fff; font-size: 35px; border-radius: 12px; padding: 5px 15px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .mute-btn.muted { opacity: 0.5; background: #333; border-color: #555; }
-
-        .timer-box {
-            background: var(--card-bg); border: 1px solid var(--danger);
-            color: var(--danger); font-size: 32px; padding: 5px 25px; border-radius: 12px;
-            min-width: 80px; text-align: center;
-            box-shadow: inset 0 0 10px rgba(255, 71, 87, 0.1);
-        }
-        .status-text {
-            background: var(--card-bg); border: 1px solid var(--accent-neon);
-            flex-grow: 1; display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: var(--accent-neon);
-            text-transform: uppercase; letter-spacing: 1px; border-radius: 12px;
-            text-shadow: 0 0 8px rgba(43, 197, 244, 0.6);
-            box-shadow: inset 0 0 15px rgba(43, 197, 244, 0.1);
-        }
-
-        .race-track {
-            width: 100%; max-width: 1725px; height: 340px;
-            background: var(--water-blue); border-radius: 15px;
-            border: 2px solid var(--accent-neon); position: relative; overflow: hidden;
-            box-shadow: 0 0 15px rgba(43, 197, 244, 0.3);
-        }
-        .river-lane {
-            height: 16.66%; border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative; background: linear-gradient(180deg, #0077be, #005f99);
-        }
-        .finish-line {
-            position: absolute; right: 0; top: 0; bottom: 0; width: 45px;
-            background: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 50% / 20px 20px;
-            opacity: 0.9; z-index: 2; border-left: 3px solid #fff;
-        }
-
-        .track-toast {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85); padding: 10px 30px; border-radius: 12px;
-            font-size: 24px; z-index: 90; display: none; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 2px solid var(--accent-neon);
-        }
-
-        .duck {
-            font-size: 42px; position: absolute; left: 10px; top: 50%;
-            transform: translateY(-50%) scaleX(-1); z-index: 5;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .duck-id {
-            position: absolute; font-size: 15px; background: #fff; color: #000;
-            width: 20px; height: 20px; border-radius: 50%; text-align: center;
-            line-height: 20px; top: 0px; left: 15px; font-weight: 900;
-            transform: scaleX(-1); border: 2px solid #000;
-        }
-
-        .podium-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.85);
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
-        }
-        .step { width: 100px; display: flex; flex-direction: column; align-items: center; border-radius: 10px 10px 0 0; }
-        .step b { font-size: 60px; color: #000; margin-bottom: 5px; text-shadow: 2px 2px 0px #fff; }
-
-        /* --- BẢNG SOI CẦU (LỊCH SỬ KÈO) --- */
-        .history-board {
-            width: 100%; max-width: 1725px; background: rgba(11, 19, 37, 0.9);
-            border: 1px solid var(--accent-neon); border-radius: 8px; margin-top: 10px;
-            padding: 8px 15px; display: flex; align-items: center; gap: 15px; box-sizing: border-box;
-            box-shadow: 0 0 10px rgba(43, 197, 244, 0.1); overflow-x: auto;
-        }
-        
-        .history-title { color: var(--gold); font-size: 16px; white-space: nowrap; text-transform: uppercase; }
-        
-        /* CĂN TRÁI CHO KÈO GẦN ĐÂY */
-        .history-list { display: flex; gap: 8px; flex-grow: 1; justify-content: flex-start; }
-        
-        .history-item {
-            background: #000; padding: 4px 10px; border-radius: 6px; border: 1px solid #333;
-            /* Đổi font bo tròn cho các số */
-            font-family: 'Nunito', sans-serif; font-size: 18px;
-            font-weight: 800; display: flex; gap: 4px; align-items: center; white-space: nowrap;
-        }
-        .h-t1 { color: #f1c40f; text-shadow: 0 0 5px rgba(241,196,15,0.5); }
-        .h-t2 { color: #bdc3c7; }
-        .h-t3 { color: #cd7f32; }
-        .h-sep { color: #555; font-size: 14px; }
-
-        /* --- BẢNG ĐIỀU KHIỂN CƯỢC --- */
-        .panel {
-            background: var(--bg-navy); width: 100%; max-width: 1725px;
-            padding: 15px; border-radius: 12px; margin-top: 10px;
-            border: 2px solid var(--accent-neon); text-align: center; box-sizing: border-box;
-        }
-        .duck-btn {
-            width: 65px; height: 65px; border-radius: 12px; border: 2px solid #2bc5f4;
-            background: #121c2f; color: white; font-size: 30px; font-weight: 800; cursor: pointer; margin: 0 5px;
-            /* Đổi font bo tròn */
-            font-family: 'Nunito', sans-serif;
-        }
-        .duck-btn.selected { background: var(--btn-cyan); color: #000; border-color: #fff; transform: translateY(-5px); }
-
-        .bet-input {
-            width: 100%; max-width: 600px; background: #000; border: 2px solid var(--accent-neon);
-            color: var(--gold); font-size: 30px; padding: 10px; border-radius: 8px;
-            text-align: center; margin: 15px 0; font-family: 'Oswald', sans-serif; font-weight: 900;
-        }
-
-        .btn-group { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-        .btn-quick {
-            background: var(--btn-cyan); color: #000; border: none; padding: 10px 18px;
-            border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 18px;
-            /* Đổi font bo tròn */
-            font-family: 'Nunito', sans-serif;
-        }
-        .btn-quick.all-in { background: var(--btn-yellow); }
-
-        .action-group { display: flex; justify-content: center; gap: 15px; }
-        .btn-action {
-            padding: 10px 30px; border-radius: 8px; border: none; font-weight: 900; font-size: 20px; cursor: pointer;
-        }
-        .btn-confirm { background: var(--success); color: #fff; }
-        .btn-cancel { background: var(--danger); color: #fff; }
-
-        .disabled { opacity: 0.4; pointer-events: none; }
-
-        .history-board::-webkit-scrollbar { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đua Vịt — Trung Tâm Giải Trí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-navy:#0b1325; --card-bg:#121c2f; --accent-neon:#2bc5f4;
+  --water-blue:#0077be; --gold:#fbc02d; --gold-glow:#f5b041;
+  --danger:#ff4757; --success:#2ecc71;
+  --btn-cyan:#3dc8f5; --btn-yellow:#f1c40f;
+}
+body{
+  font-family:'Oswald',sans-serif;background-color:var(--bg-navy);color:#fff;
+  margin:0;padding:10px;display:flex;flex-direction:column;align-items:center;
+  font-weight:900;overflow-x:hidden;
+  background-image:radial-gradient(circle at 50% 0%,#121c2f 0%,#0b1325 60%);
+}
+/* ---- HUB ---- */
+.top-info{
+  width:100%;max-width:1725px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;margin-bottom:8px;border:2px solid var(--accent-neon);
+  border-radius:12px;padding:8px 14px;box-sizing:border-box;
+  background-color:rgba(11,19,37,.85);box-shadow:0 0 10px rgba(43,197,244,.2);
+}
+.ti-left{display:flex;align-items:center;gap:10px}
+.btn-home{
+  display:flex;align-items:center;gap:8px;background:rgba(43,197,244,.12);color:var(--accent-neon);
+  text-decoration:none;padding:8px 16px;border-radius:10px;font-size:16px;font-weight:900;
+  border:2px solid rgba(43,197,244,.5);letter-spacing:1px;transition:.2s;
+}
+.btn-home svg{width:15px;height:15px}
+.btn-home:hover{background:var(--accent-neon);color:#0b1d2e;box-shadow:0 0 12px rgba(43,197,244,.5)}
+.icon-btn{
+  width:42px;height:42px;border-radius:10px;border:2px solid rgba(43,197,244,.5);
+  background:rgba(43,197,244,.1);color:var(--accent-neon);display:grid;place-items:center;
+  cursor:pointer;transition:.2s;
+}
+.icon-btn:hover{background:var(--accent-neon);color:#0b1d2e}
+.icon-btn svg{width:18px;height:18px}
+#sound-btn .off{display:none}
+#sound-btn.muted .on{display:none}
+#sound-btn.muted .off{display:block}
+#sound-btn.muted{opacity:.55;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.4)}
+.ti-title{font-size:14px;letter-spacing:4px;color:rgba(255,255,255,.55)}
+.balance{
+  display:flex;align-items:center;gap:9px;color:var(--gold);font-size:19px;
+  background:rgba(0,0,0,.4);padding:7px 16px;border-radius:10px;
+  font-family:'Roboto Mono',monospace;border:1px solid rgba(248,194,45,.4);
+}
+.balance svg{width:19px;height:19px;flex:none}
+/* ---- TRẠNG THÁI ---- */
+.status-board{
+  width:100%;max-width:1725px;display:flex;justify-content:flex-start;
+  align-items:stretch;gap:10px;margin-bottom:8px;
+}
+.timer-box{
+  background:var(--card-bg);border:1px solid var(--danger);color:var(--danger);
+  font-size:28px;padding:6px 22px;border-radius:12px;min-width:90px;text-align:center;
+  box-shadow:inset 0 0 10px rgba(255,71,87,.1);font-family:'Roboto Mono',monospace;
+}
+.timer-box.urgent{animation:urg .5s infinite alternate}
+@keyframes urg{from{transform:scale(1)}to{transform:scale(1.06)}}
+.status-text{
+  background:var(--card-bg);border:1px solid var(--accent-neon);flex-grow:1;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  color:var(--accent-neon);text-transform:uppercase;letter-spacing:1px;border-radius:12px;
+  text-shadow:0 0 8px rgba(43,197,244,.6);box-shadow:inset 0 0 15px rgba(43,197,244,.1);
+  transition:color .3s;
+}
+/* ---- ĐƯỜNG ĐUA ---- */
+.race-track{
+  width:100%;max-width:1725px;height:340px;background:var(--water-blue);
+  border-radius:15px;border:2px solid var(--accent-neon);position:relative;overflow:hidden;
+  box-shadow:0 0 15px rgba(43,197,244,.3);
+}
+.river-lane{
+  height:16.66%;border-bottom:1px solid rgba(255,255,255,.15);position:relative;
+  background:linear-gradient(180deg,#0077be,#005f99);
+}
+.finish-line{
+  position:absolute;right:0;top:0;bottom:0;width:45px;
+  background:repeating-conic-gradient(#fff 0% 25%,#000 0% 50%) 50% / 20px 20px;
+  opacity:.9;z-index:2;border-left:3px solid #fff;
+}
+.track-toast{
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.85);padding:10px 30px;border-radius:12px;
+  font-size:22px;z-index:90;display:none;text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,.5);border:2px solid var(--accent-neon);
+}
+.duck{
+  font-size:42px;position:absolute;left:0;top:50%;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+}
+.duck-body{display:inline-block;will-change:transform;transform:translateX(var(--x,0px)) translateY(-50%) scaleX(-1)}
+.duck.racing .duck-body{animation:bob .35s infinite alternate}
+@keyframes bob{from{margin-top:0}to{margin-top:-5px}}
+.duck-id{
+  position:absolute;font-size:15px;background:#fff;color:#000;
+  width:20px;height:20px;border-radius:50%;text-align:center;line-height:20px;
+  top:2px;left:14px;font-weight:900;transform:scaleX(-1);border:2px solid #000;z-index:6;
+}
+.duck.won .duck-body{filter:drop-shadow(0 0 8px var(--gold))}
+/* ---- PODIUM ---- */
+.podium-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.85);display:none;
+  flex-direction:column;align-items:center;justify-content:center;z-index:100;
+}
+.step{width:110px;display:flex;flex-direction:column;align-items:center;border-radius:10px 10px 0 0}
+.step .lbl{font-size:13px;letter-spacing:2px;color:#fff;margin-bottom:4px;opacity:.85}
+.step b{font-size:58px;color:#000;margin-bottom:5px;text-shadow:2px 2px 0 #fff;font-family:'Roboto Mono',monospace}
+/* ---- SOI CẦU ---- */
+.history-board{
+  width:100%;max-width:1725px;background:rgba(11,19,37,.9);
+  border:1px solid var(--accent-neon);border-radius:8px;margin-top:10px;
+  padding:8px 15px;display:flex;align-items:center;gap:15px;box-sizing:border-box;
+  box-shadow:0 0 10px rgba(43,197,244,.1);overflow-x:auto;
+}
+.history-title{color:var(--gold);font-size:16px;white-space:nowrap;text-transform:uppercase}
+.history-list{display:flex;gap:8px;flex-grow:1;justify-content:flex-start}
+.history-item{
+  background:#000;padding:4px 10px;border-radius:6px;border:1px solid #333;
+  font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;
+  display:flex;gap:4px;align-items:center;white-space:nowrap;
+}
+.h-t1{color:#f1c40f;text-shadow:0 0 5px rgba(241,196,15,.5)}
+.h-t2{color:#bdc3c7}
+.h-t3{color:#cd7f32}
+.h-sep{color:#555;font-size:14px}
+.history-board::-webkit-scrollbar{display:none}
+/* ---- CƯỢC ---- */
+.panel{
+  background:var(--bg-navy);width:100%;max-width:1725px;padding:15px;
+  border-radius:12px;margin-top:10px;border:2px solid var(--accent-neon);
+  text-align:center;box-sizing:border-box;
+}
+.duck-btn{
+  width:65px;height:65px;border-radius:12px;border:2px solid #2bc5f4;
+  background:#121c2f;color:white;font-size:30px;font-weight:800;cursor:pointer;margin:0 5px;
+  font-family:'Nunito',sans-serif;transition:.15s;
+}
+.duck-btn:hover{border-color:#fff}
+.duck-btn.selected{background:var(--btn-cyan);color:#000;border-color:#fff;transform:translateY(-5px)}
+.bet-input{
+  width:100%;max-width:600px;background:#000;border:2px solid var(--accent-neon);
+  color:var(--gold);font-size:28px;padding:10px;border-radius:8px;
+  text-align:center;margin:15px 0;font-family:'Oswald',sans-serif;font-weight:900;
+}
+.btn-group{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:15px}
+.btn-quick{
+  background:var(--btn-cyan);color:#000;border:none;padding:10px 18px;
+  border-radius:6px;cursor:pointer;font-weight:800;font-size:18px;
+  font-family:'Nunito',sans-serif;transition:.15s;
+}
+.btn-quick:hover{filter:brightness(1.12)}
+.btn-quick.all-in{background:var(--btn-yellow)}
+.action-group{display:flex;justify-content:center;gap:15px}
+.btn-action{
+  padding:12px 32px;border-radius:8px;border:none;font-weight:900;font-size:19px;
+  cursor:pointer;letter-spacing:1px;transition:.15s;font-family:'Oswald',sans-serif;
+}
+.btn-action:hover{filter:brightness(1.12)}
+.btn-action:active{transform:scale(.96)}
+.btn-confirm{background:var(--success);color:#fff}
+.btn-cancel{background:var(--danger);color:#fff}
+.disabled{opacity:.4;pointer-events:none}
+@media(max-width:640px){
+  .duck-btn{width:46px;height:46px;font-size:22px;margin:0 3px}
+  .status-text{font-size:17px}
+  .timer-box{font-size:22px;padding:6px 14px}
+}
+</style>
 </head>
 <body>
 
-    <div class="top-info">
-        <a href="index.html" class="btn-home">← TRANG CHỦ</a>
-        <div class="balance" id="balance">💰 Đang tải...</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="ic-coin" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9" fill="none" stroke="#fbc02d" stroke-width="2.4"/>
+  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#fbc02d" stroke-width="1.8"/>
+</symbol>
+<symbol id="ic-snd" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/></g></symbol>
+<symbol id="ic-mute" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m16 9 5 6m0-6-5 6"/></g></symbol>
+<symbol id="ic-back" viewBox="0 0 24 24"><path d="M19 12H5m6-7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<!-- HUB -->
+<div class="top-info">
+  <div class="ti-left">
+    <a href="index.html" class="btn-home"><svg><use href="#ic-back"/></svg>TRANG CHỦ</a>
+    <button class="icon-btn" id="sound-btn" title="Âm thanh">
+      <svg class="on"><use href="#ic-snd"/></svg>
+      <svg class="off"><use href="#ic-mute"/></svg>
+    </button>
+  </div>
+  <div class="ti-title">ĐUA VỊT · SOI CẦU</div>
+  <div class="balance"><svg><use href="#ic-coin"/></svg><span id="bal">5.000.000</span></div>
+</div>
+
+<div class="status-board">
+  <div class="timer-box" id="timer">30s</div>
+  <div class="status-text" id="status">MỜI ĐẶT CƯỢC</div>
+</div>
+
+<!-- ĐƯỜNG ĐUA -->
+<div class="race-track" id="track">
+  <div class="track-toast" id="toast"></div>
+  <div class="finish-line"></div>
+  <div id="lanes" style="height:100%"></div>
+
+  <div class="podium-overlay" id="podium">
+    <h1 id="res-msg" style="font-size:44px;margin-bottom:20px"></h1>
+    <div style="display:flex;align-items:flex-end;gap:20px;height:210px">
+      <div class="step" style="height:120px;background:#bdc3c7;order:1"><span class="lbl">TOP 2</span><b id="r2"></b></div>
+      <div class="step" style="height:170px;background:#f1c40f;order:2;box-shadow:0 0 30px #f1c40f"><span class="lbl">TOP 1</span><b id="r1"></b></div>
+      <div class="step" style="height:90px;background:#cd7f32;order:3"><span class="lbl">TOP 3</span><b id="r3"></b></div>
     </div>
+    <p style="margin-top:25px;font-size:18px;color:#fff;background:#000;padding:5px 15px;border-radius:10px">VÁN MỚI SẼ BẮT ĐẦU TRONG GIÂY LÁT...</p>
+  </div>
+</div>
 
-    <div class="status-board">
-        <button id="mute-btn" class="mute-btn" onclick="toggleMute()" title="Bật/Tắt âm thanh">🔊</button>
-        <div class="timer-box" id="timer">30s</div>
-        <div class="status-text" id="status">MỜI ĐẶT CƯỢC</div>
-    </div>
+<!-- SOI CẦU -->
+<div class="history-board">
+  <div class="history-title">KÈO GẦN ĐÂY:</div>
+  <div class="history-list" id="history-container">
+    <div class="history-item" style="color:#666;font-size:14px;border:none;padding:0;font-family:'Nunito',sans-serif">Chưa có dữ liệu...</div>
+  </div>
+</div>
 
-    <div class="race-track" id="track">
-        <div class="track-toast" id="toast"></div>
-        <div class="finish-line"></div>
-        <div id="lanes" style="height: 100%;"></div>
-        
-        <div class="podium-overlay" id="podium">
-            <h1 id="res-msg" style="font-size: 50px; margin-bottom: 20px;"></h1>
-            <div style="display: flex; align-items: flex-end; gap: 20px; height: 200px;">
-                <div class="step" style="height: 120px; background: #bdc3c7; order: 1;"><span>🥈</span><b id="r2"></b></div>
-                <div class="step" style="height: 170px; background: #f1c40f; order: 2; box-shadow: 0 0 30px #f1c40f;"><span>🥇</span><b id="r1"></b></div>
-                <div class="step" style="height: 90px; background: #cd7f32; order: 3;"><span>🥉</span><b id="r3"></b></div>
-            </div>
-            <p style="margin-top: 25px; font-size: 20px; color: #fff; background: #000; padding: 5px 15px; border-radius: 10px;">VÁN MỚI SẼ BẮT ĐẦU TRONG 2S...</p>
-        </div>
-    </div>
+<!-- CƯỢC -->
+<div class="panel" id="bet-panel">
+  <div id="duck-picks" style="margin-bottom:5px">
+    <button class="duck-btn" data-duck="1">1</button>
+    <button class="duck-btn" data-duck="2">2</button>
+    <button class="duck-btn" data-duck="3">3</button>
+    <button class="duck-btn" data-duck="4">4</button>
+    <button class="duck-btn" data-duck="5">5</button>
+    <button class="duck-btn" data-duck="6">6</button>
+  </div>
 
-    <div class="history-board">
-        <div class="history-title">📊 KÈO GẦN ĐÂY:</div>
-        <div class="history-list" id="history-container">
-            <div class="history-item" style="color: #666; font-size: 14px; border: none; padding: 0; font-family: 'Nunito', sans-serif;">Chưa có dữ liệu...</div>
-        </div>
-    </div>
+  <input type="text" id="bet-amt" class="bet-input" placeholder="MỨC CƯỢC..." readonly>
 
-    <div class="panel" id="bet-panel">
-        <div style="margin-bottom: 5px;">
-            <button class="duck-btn" onclick="pick(1)">1</button>
-            <button class="duck-btn" onclick="pick(2)">2</button>
-            <button class="duck-btn" onclick="pick(3)">3</button>
-            <button class="duck-btn" onclick="pick(4)">4</button>
-            <button class="duck-btn" onclick="pick(5)">5</button>
-            <button class="duck-btn" onclick="pick(6)">6</button>
-        </div>
+  <div class="btn-group" id="money-btns">
+    <button class="btn-quick" data-add="50000">+50K</button>
+    <button class="btn-quick" data-add="100000">+100K</button>
+    <button class="btn-quick" data-add="500000">+500K</button>
+    <button class="btn-quick" data-add="1000000">+1M</button>
+    <button class="btn-quick" data-add="5000000">+5M</button>
+    <button class="btn-quick all-in" id="btn-allin">TẤT TAY</button>
+  </div>
 
-        <input type="text" id="bet-amt" class="bet-input" placeholder="MỨC CƯỢC..." readonly>
-        
-        <div class="btn-group">
-            <button class="btn-quick" onclick="add(50000)">+50K</button>
-            <button class="btn-quick" onclick="add(100000)">+100K</button>
-            <button class="btn-quick" onclick="add(500000)">+500K</button>
-            <button class="btn-quick" onclick="add(1000000)">+1M</button>
-            <button class="btn-quick" onclick="add(5000000)">+5M</button>
-            <button class="btn-quick all-in" onclick="allIn()">TẤT TAY</button>
-        </div>
+  <div class="action-group">
+    <button class="btn-action btn-confirm" id="btn-confirm">XÁC NHẬN CƯỢC</button>
+    <button class="btn-action btn-cancel" id="btn-cancel">HỦY CƯỢC</button>
+  </div>
+</div>
 
-        <div class="action-group">
-            <button class="btn-action btn-confirm" onclick="confirm()">XÁC NHẬN CƯỢC</button>
-            <button class="btn-action btn-cancel" onclick="clearBet()">HỦY CƯỢC</button>
-        </div>
-    </div>
+<script>
+/* ============ VÍ TIỀN CHUNG (key "userBalance") ============ */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => Math.round(n).toLocaleString('vi-VN');
+const wallet = {
+  bal: 0, shown: 0, anim: null, el: $('#bal'),
+  load(){
+    const v = parseInt(String(localStorage.getItem('userBalance')||'').replace(/[.,\s]/g,''));
+    this.bal = isNaN(v) ? 5000000 : v; this.render();
+  },
+  render(){ this.el.textContent = fmt(this.bal); this.shown = this.bal },
+  set(v){
+    this.bal = Math.max(0, Math.round(v));
+    localStorage.setItem('userBalance', this.bal);
+    if(this.anim) cancelAnimationFrame(this.anim);
+    const from = this.shown, to = this.bal, t0 = performance.now();
+    const step = t => { const p = Math.min(1,(t-t0)/650), e = 1-Math.pow(1-p,3);
+      this.shown = Math.round(from+(to-from)*e); this.el.textContent = fmt(this.shown);
+      if(p<1) this.anim = requestAnimationFrame(step); else this.anim = null };
+    this.anim = requestAnimationFrame(step);
+  },
+  add(v){ this.set(this.bal + v) }
+};
+wallet.load();
+addEventListener('storage', e => { if(e.key === 'userBalance') wallet.load() });
 
-    <audio id="snd" src="https://audio-previews.elements.envatousercontent.com/files/148249604/preview.mp3"></audio>
-    <audio id="whistle-snd" src="https://www.myinstants.com/media/sounds/referee-whistle.mp3"></audio>
+/* ============ ÂM THANH (WebAudio, chung khóa "muted") ============ */
+const sound = {
+  muted: localStorage.getItem('muted') === '1', ctx: null,
+  ac(){ try{
+    if(!this.ctx){ const C = window.AudioContext || window.webkitAudioContext; if(!C) return null; this.ctx = new C() }
+    if(this.ctx.state === 'suspended'){ this.ctx.resume().catch(()=>{}) }
+    return this.ctx;
+  }catch(e){ return null } },
+  tone(f, dur=.1, type='sine', vol=.06, when=0, slide=0){
+    if(this.muted) return; const c = this.ac(); if(!c) return;
+    try{
+      const t = c.currentTime + when, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f+slide), t+dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t+.012);
+      g.gain.exponentialRampToValueAtTime(.0001, t+dur);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+.05);
+    }catch(e){}
+  },
+  click(){ this.tone(720,.05,'triangle',.05) },
+  chip(){ this.tone(520,.06,'triangle',.05); this.tone(780,.05,'triangle',.04,.05) },
+  tick(){ this.tone(1050,.05,'triangle',.05) },
+  quack(){ this.tone(760,.09,'sawtooth',.05,0,-380); this.tone(700,.07,'sawtooth',.04,.1,-300) },
+  whistle(){ this.tone(2200,.5,'square',.05); this.tone(2330,.5,'square',.03) },
+  win(){ [523,659,784,1046].forEach((f,i)=>this.tone(f,.14,'sine',.07,i*.09)) },
+  lose(){ this.tone(240,.2,'sine',.045,0,-100) }
+};
+function syncSndBtn(){ $('#sound-btn').classList.toggle('muted', sound.muted) }
+syncSndBtn();
+ $('#sound-btn').addEventListener('click', () => {
+  sound.muted = !sound.muted;
+  try{ localStorage.setItem('muted', sound.muted ? '1' : '0') }catch(e){}
+  syncSndBtn();
+  if(!sound.muted) sound.click();
+});
+addEventListener('storage', e => {
+  if(e.key === 'muted'){ sound.muted = e.newValue === '1'; syncSndBtn() }
+});
 
-    <script>
-        let bal = parseInt(localStorage.getItem('userBalance')) || 0;
-        let time = 30;
-        let state = "BET";
-        let myDuck = null;
-        let myBet = 0;
-        let isConfirmed = false;
-        let toastTimer;
-        let isMuted = false;
-        
-        let matchHistory = JSON.parse(localStorage.getItem('duckHistory')) || [];
+/* ============ TRẠNG THÁI ============ */
+let matchHistory = [];
+try{ matchHistory = JSON.parse(localStorage.getItem('duckHistory') || '[]') }catch(e){ matchHistory = [] }
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('snd').muted = isMuted;
-            document.getElementById('whistle-snd').muted = isMuted;
-            
-            let muteBtn = document.getElementById('mute-btn');
-            muteBtn.innerText = isMuted ? "🔇" : "🔊";
-            if(isMuted) {
-                muteBtn.classList.add('muted');
-            } else {
-                muteBtn.classList.remove('muted');
-            }
-        }
+let phase = 'bet', countdown = 30;
+let myDuck = null, myBet = 0, isConfirmed = false;
+let raceLoop = null, quackTimer = null, toastTimer = null;
 
-        function showToast(msg, isError = false) {
-            let t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.color = isError ? "var(--danger)" : "var(--gold)";
-            t.style.borderColor = isError ? "var(--danger)" : "var(--accent-neon)";
-            t.style.display = "block";
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => { t.style.display = "none"; }, 2000);
-        }
+const track = $('#track'), statusEl = $('#status'), timerEl = $('#timer');
+const betInput = $('#bet-amt'), betPanel = $('#bet-panel');
 
-        function update() {
-            document.getElementById('balance').innerText = "💰 " + bal.toLocaleString();
-            localStorage.setItem('userBalance', bal);
-        }
+/* ============ HIỂN THỊ ============ */
+function showToast(msg, isError = false){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.style.color = isError ? 'var(--danger)' : 'var(--gold)';
+  t.style.borderColor = isError ? 'var(--danger)' : 'var(--accent-neon)';
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none' }, 2000);
+}
+function setStatus(text, color){
+  statusEl.textContent = text;
+  statusEl.style.color = color;
+}
+function updateBetInput(){ betInput.value = myBet ? fmt(myBet) : '' }
+function setPanelEnabled(on){ betPanel.classList.toggle('disabled', !on) }
+function renderHistory(){
+  const hc = $('#history-container');
+  if(!matchHistory.length) return;
+  hc.innerHTML = matchHistory.map(top3 => `
+    <div class="history-item">
+      <span class="h-t1">${top3[0]}</span><span class="h-sep">-</span>
+      <span class="h-t2">${top3[1]}</span><span class="h-sep">-</span>
+      <span class="h-t3">${top3[2]}</span>
+    </div>`).join('');
+}
+renderHistory();
 
-        function renderHistory() {
-            const hc = document.getElementById('history-container');
-            if(matchHistory.length === 0) return;
-            
-            hc.innerHTML = matchHistory.map(top3 => `
-                <div class="history-item">
-                    <span class="h-t1">${top3[0]}</span><span class="h-sep">-</span><span class="h-t2">${top3[1]}</span><span class="h-sep">-</span><span class="h-t3">${top3[2]}</span>
-                </div>
-            `).join('');
-        }
+/* ============ CƯỢC ============ */
+ $$('#duck-picks .duck-btn').forEach(b => b.addEventListener('click', () => {
+  if(phase !== 'bet' || isConfirmed) return;
+  const id = +b.dataset.duck;
+  myDuck = (myDuck === id) ? null : id;
+  $$('#duck-picks .duck-btn').forEach(x => x.classList.toggle('selected', +x.dataset.duck === myDuck));
+  sound.click();
+}));
+ $$('#money-btns .btn-quick').forEach(b => {
+  if(b.id === 'btn-allin') return;
+  b.addEventListener('click', () => {
+    if(phase !== 'bet' || isConfirmed) return;
+    const v = +b.dataset.add;
+    if(myBet + v > wallet.bal){ showToast('KHÔNG ĐỦ LÚA!', true); sound.lose(); return }
+    myBet += v;
+    updateBetInput();
+    sound.chip();
+  });
+});
+ $('#btn-allin').addEventListener('click', () => {
+  if(phase !== 'bet' || isConfirmed) return;
+  if(wallet.bal <= 0){ showToast('KHÔNG ĐỦ LÚA!', true); return }
+  myBet = wallet.bal;
+  updateBetInput();
+  sound.chip();
+});
+ $('#btn-cancel').addEventListener('click', () => {
+  if(phase !== 'bet' || isConfirmed) return;
+  clearBet();
+  sound.click();
+});
+ $('#btn-confirm').addEventListener('click', () => {
+  if(phase !== 'bet' || isConfirmed) return;
+  if(!myDuck || myBet <= 0){ showToast('VUI LÒNG CHỌN VỊT VÀ CƯỢC!', true); sound.lose(); return }
+  if(myBet > wallet.bal){ showToast('KHÔNG ĐỦ LÚA!', true); return }
+  wallet.add(-myBet);          /* trừ tiền ngay khi xác nhận — dòng tiền chuẩn */
+  isConfirmed = true;
+  setPanelEnabled(false);
+  setStatus('ĐÃ ĐẶT VỊT SỐ ' + myDuck, 'var(--gold)');
+  showToast('ĐẶT CƯỢC THÀNH CÔNG!');
+  sound.click();
+});
+function clearBet(){
+  myBet = 0; myDuck = null; isConfirmed = false;
+  updateBetInput();
+  $$('#duck-picks .duck-btn').forEach(b => b.classList.remove('selected'));
+}
 
-        function pick(id) {
-            if(state !== "BET") return;
-            myDuck = (myDuck === id) ? null : id;
-            document.querySelectorAll('.duck-btn').forEach((b, i) => b.classList.toggle('selected', (i+1) === myDuck));
-        }
+/* ============ TẠO VỊT ============ */
+function createDucks(){
+  const lanes = $('#lanes');
+  lanes.innerHTML = '';
+  for(let i = 1; i <= 6; i++){
+    lanes.innerHTML += `<div class="river-lane"><div class="duck" id="d-${i}">
+      <div class="duck-id">${i}</div><span class="duck-body">🦆</span></div></div>`;
+  }
+}
+createDucks();
 
-        function add(v) {
-            if(state !== "BET") return;
-            if(myBet + v > bal) { showToast("KHÔNG ĐỦ LÚA!", true); return; }
-            myBet += v;
-            document.getElementById('bet-amt').value = myBet.toLocaleString();
-        }
+/* ============ VÒNG VÁN (state machine) ============ */
+setInterval(() => {
+  if(phase !== 'bet') return;
+  countdown--;
+  timerEl.textContent = Math.max(0, countdown) + 's';
+  timerEl.classList.toggle('urgent', countdown <= 5);
+  if(countdown <= 3 && countdown > 0) sound.tick();
+  if(countdown <= 0){
+    /* hết giờ: chưa xác nhận thì bỏ cược (không mất tiền) */
+    if(!isConfirmed) clearBet();
+    setPanelEnabled(false);
+    phase = 'prepare';
+    setStatus('CHUẨN BỊ...', 'var(--danger)');
+    sound.whistle();
+    setTimeout(startRace, 1300);
+  }
+}, 1000);
 
-        function allIn() { if(state !== "BET") return; myBet = bal; document.getElementById('bet-amt').value = myBet.toLocaleString(); }
+function startRace(){
+  phase = 'race';
+  setStatus('CUỘC ĐUA ĐANG DIỄN RA!', 'var(--accent-neon)');
 
-        function clearBet() {
-            if(state !== "BET") return;
-            myBet = 0; myDuck = null; isConfirmed = false;
-            document.getElementById('bet-amt').value = "";
-            document.querySelectorAll('.duck-btn').forEach(b => b.classList.remove('selected'));
-        }
+  const pos = [0, 0, 0, 0, 0, 0];
+  const won = [];
+  const FINISH = 92;             /* % chiều rộng track */
 
-        function confirm() {
-            if(!myDuck || myBet <= 0) { showToast("VUI LÒNG CHỌN VỊT VÀ CƯỢC!", true); return; }
-            isConfirmed = true;
-            document.getElementById('bet-panel').classList.add('disabled');
-            let st = document.getElementById('status');
-            st.innerText = "ĐÃ ĐẶT VỊT SỐ " + myDuck;
-            st.style.color = "var(--gold)";
-            showToast("ĐẶT CƯỢC THÀNH CÔNG!");
-        }
+  $$('#lanes .duck').forEach(d => d.classList.add('racing'));
 
-        function createDucks() {
-            const lanes = document.getElementById('lanes');
-            lanes.innerHTML = '';
-            for(let i=1; i<=6; i++) {
-                lanes.innerHTML += `<div class="river-lane"><div class="duck" id="d-${i}" style="left:10px;"><div class="duck-id">${i}</div>🦆</div></div>`;
-            }
-        }
+  /* quắc quắc vui trong lúc đua */
+  quackTimer = setInterval(() => {
+    if(Math.random() < .7) sound.quack();
+  }, 650);
 
-        setInterval(() => {
-            if(time > 0) {
-                time--;
-                document.getElementById('timer').innerText = time + "s";
-                if(state === "BET" && time <= 0) {
-                    if (!isConfirmed) {
-                        myBet = 0;
-                        myDuck = null;
-                    }
-                    
-                    state = "WAITING_SOUND";
-                    let st = document.getElementById('status');
-                    st.innerText = "CHUẨN BỊ...";
-                    st.style.color = "var(--danger)";
-                    
-                    let whistle = document.getElementById('whistle-snd');
-                    let playPromise = whistle.play();
-                    
-                    if (playPromise !== undefined) {
-                        playPromise.then(_ => {
-                            whistle.onended = () => {
-                                state = "RACE"; time = 15;
-                                startRace();
-                            };
-                        }).catch(error => {
-                            state = "RACE"; time = 15;
-                            startRace();
-                        });
-                    } else {
-                        whistle.onended = () => {
-                            state = "RACE"; time = 15;
-                            startRace();
-                        };
-                    }
-                }
-            }
-        }, 1000);
+  raceLoop = setInterval(() => {
+    for(let i = 1; i <= 6; i++){
+      if(pos[i-1] < FINISH){
+        let move = Math.random() * .35 + .28;      /* 0.28–0.63%/frame */
+        if(Math.random() < .015) move += 2.4;      /* cú boost hiếm */
+        pos[i-1] = Math.min(FINISH, pos[i-1] + move);
+        const duck = document.getElementById('d-' + i);
+        const px = pos[i-1] / 100 * track.offsetWidth;
+        duck.querySelector('.duck-body').style.setProperty('--x', px + 'px');
+      } else if(!won.includes(i)){
+        won.push(i);
+        document.getElementById('d-' + i).classList.add('won');
+        sound.tick();
+      }
+    }
+    if(won.length >= 6){
+      clearInterval(raceLoop);
+      if(quackTimer){ clearInterval(quackTimer); quackTimer = null }
+      showPodium(won.slice(0, 3));
+    }
+  }, 40);
+}
 
-        function startRace() {
-            let wins = [];
-            let pos = [10, 10, 10, 10, 10, 10];
-            let st = document.getElementById('status');
-            st.innerText = "CUỘC ĐUA ĐANG DIỄN RA!";
-            st.style.color = "var(--accent-neon)";
-            document.getElementById('bet-panel').classList.add('disabled');
-            
-            let trackWidth = document.getElementById('track').offsetWidth;
-            let finishPoint = trackWidth - 70;
+function showPodium(top3){
+  phase = 'result';
+  $('#r1').textContent = top3[0];
+  $('#r2').textContent = top3[1];
+  $('#r3').textContent = top3[2];
 
-            let loop = setInterval(() => {
-                for(let i=1; i<=6; i++) {
-                    if(pos[i-1] < finishPoint) {
-                        let move = Math.random() * 1.5 + 2.0;
-                        let chance = Math.random();
-                        if(chance < 0.015) move += 12;
-                        
-                        pos[i-1] += move;
-                        document.getElementById(`d-${i}`).style.left = pos[i-1] + "px";
-                    } else if(!wins.includes(i)) {
-                        wins.push(i);
-                    }
-                }
-                
-                if(wins.length >= 6) {
-                    clearInterval(loop);
-                    time = 0;
-                    showWin(wins.slice(0,3));
-                }
-            }, 40);
-        }
+  const msg = $('#res-msg');
+  if(isConfirmed && myBet > 0){
+    if(top3.includes(myDuck)){
+      const winAmt = myBet * 2;                    /* hoàn cược + ăn 1:1 */
+      wallet.add(winAmt);
+      msg.textContent = `THẮNG LỚN (TOP ${top3.indexOf(myDuck) + 1}): +${fmt(winAmt)}đ`;
+      msg.style.color = 'var(--success)';
+      sound.win();
+    } else {
+      msg.textContent = 'BẠN ĐÃ THUA (VỊT TOP 4-6)';
+      msg.style.color = 'var(--danger)';
+      sound.lose();
+    }
+  } else {
+    msg.textContent = 'KẾT QUẢ CUỘC ĐUA';
+    msg.style.color = '#fff';
+  }
 
-        function showWin(top3) {
-            const p = document.getElementById('podium');
-            const msg = document.getElementById('res-msg');
-            document.getElementById('r1').innerText = top3[0];
-            document.getElementById('r2').innerText = top3[1];
-            document.getElementById('r3').innerText = top3[2];
-            
-            p.style.display = "flex";
-            document.getElementById('snd').play().catch(e => {});
+  $('#podium').style.display = 'flex';
 
-            // ĐẨY TRẬN MỚI LÊN ĐẦU, ĐÔN TRẬN CŨ VỀ SAU
-            matchHistory.unshift(top3);
-            if(matchHistory.length > 6) matchHistory.pop();
-            localStorage.setItem('duckHistory', JSON.stringify(matchHistory));
-            renderHistory();
+  matchHistory.unshift(top3);
+  if(matchHistory.length > 6) matchHistory.pop();
+  try{ localStorage.setItem('duckHistory', JSON.stringify(matchHistory)) }catch(e){}
+  renderHistory();
 
-            if(myBet > 0 && isConfirmed) {
-                if(top3.includes(myDuck)) {
-                    let winAmt = myBet * 2;
-                    bal += winAmt;
-                    msg.innerText = "THẮNG LỚN (TOP " + (top3.indexOf(myDuck)+1) + "): +" + winAmt.toLocaleString();
-                    msg.style.color = "var(--success)";
-                } else {
-                    bal -= myBet;
-                    msg.innerText = "BẠN ĐĐ THUA (TOP 4-6)";
-                    msg.style.color = "var(--danger)";
-                }
-                update();
-            } else {
-                msg.innerText = "KẾT QUẢ CUỘC ĐUA";
-                msg.style.color = "#fff";
-            }
+  setTimeout(() => {
+    $('#podium').style.display = 'none';
+    clearBet();
+    createDucks();
+    setPanelEnabled(true);
+    phase = 'bet';
+    countdown = 30;
+    timerEl.textContent = '30s';
+    timerEl.classList.remove('urgent');
+    setStatus('MỜI ĐẶT CƯỢC', 'var(--accent-neon)');
+  }, 2400);
+}
 
-            setTimeout(() => {
-                p.style.display = "none";
-                state = "BET"; time = 30;
-                isConfirmed = false;
-                clearBet();
-                document.getElementById('bet-panel').classList.remove('disabled');
-                let st = document.getElementById('status');
-                st.innerText = "MỜI ĐẶT CƯỢC";
-                st.style.color = "var(--accent-neon)";
-                createDucks();
-            }, 2000);
-        }
-
-        createDucks();
-        update();
-        renderHistory();
-    </script>
+updateBetInput();
+</script>
 </body>
 </html>
