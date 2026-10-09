@@ -1,307 +1,427 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oản Tù Tì Wide Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-navy: #0a192f; --card-navy: #112240; --neon-blue: #00d2ff;
-            --white: #e6f1ff; --gold: #f1c40f; --red: #ff4757;
-        }
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Oswald', sans-serif; background-color: var(--bg-navy);
-            color: var(--white); display: flex; flex-direction: column; align-items: center;
-            justify-content: center; height: 100vh; margin: 0; padding: 10px;
-            overflow: hidden; user-select: none;
-        }
-
-        /* --- UI WIDE X 1.4 --- */
-        .navbar { width: 100%; max-width: 728px; display: flex; justify-content: flex-end; margin-bottom: 8px; }
-        .balance-box { 
-            color: var(--gold); font-size: 26px; font-family: 'Roboto Mono', monospace; 
-            background: var(--card-navy); padding: 8px 25px; border-radius: 16px; border: 2px solid var(--gold);
-        }
-
-        .game-frame {
-            width: 100%; max-width: 728px; padding: 21px; background-color: var(--card-navy); 
-            border-radius: 35px; border: 2px solid var(--neon-blue);
-            display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-
-        /* Nút Trang Chủ nằm trong bàn chơi */
-        .btn-home {
-            position: absolute; top: 18px; left: 18px; color: var(--neon-blue);
-            border: 2px solid var(--neon-blue); padding: 6px 16px; border-radius: 8px;
-            font-size: 14px; text-decoration: none; text-transform: uppercase; font-weight: bold;
-            z-index: 10; background: var(--bg-navy); transition: 0.2s;
-        }
-        .btn-home:hover { background: var(--neon-blue); color: var(--bg-navy); }
-
-        .timer-box { font-size: 50px; color: var(--red); font-weight: 800; margin-bottom: 8px; line-height: 1; }
-
-        .arena {
-            display: flex; justify-content: space-around; align-items: center;
-            background: rgba(10, 25, 47, 0.95); padding: 21px; border-radius: 28px;
-            width: 100%; position: relative; border: 2px solid rgba(0, 210, 255, 0.4); 
-            margin-bottom: 21px; height: 196px;
-        }
-
-        #game-status-msg {
-            position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-            background: var(--bg-navy); border: 2px solid var(--neon-blue);
-            padding: 6px 28px; border-radius: 16px; font-size: 18px;
-            color: var(--neon-blue); text-transform: uppercase; white-space: nowrap; z-index: 5;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        /* Cảnh báo to dễ nhìn */
-        .warning-msg {
-            font-size: 24px !important;
-            padding: 10px 40px !important;
-            background: #ff4757 !important;
-            color: #fff !important;
-            border-color: #fff !important;
-            box-shadow: 0 0 30px #ff4757 !important;
-            transform: translateX(-50%) scale(1.15) !important;
-            z-index: 20 !important;
-        }
-
-        .hand-side { display: flex; flex-direction: column; align-items: center; width: 168px; }
-        .hand-icon { font-size: 91px; filter: drop-shadow(0 0 12px rgba(255,255,255,0.1)); }
-        .hand-label { font-size: 16px; color: var(--white); margin-top: 7px; opacity: 0.6; font-weight: bold; letter-spacing: 1px; }
-        .vs-text { font-size: 45px; color: var(--gold); font-weight: 900; font-style: italic; }
-
-        .result-overlay {
-            position: absolute; inset: 0; display: flex; justify-content: center; align-items: center;
-            font-size: 77px; font-weight: 900; opacity: 0; pointer-events: none;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            z-index: 10; background: rgba(10, 25, 47, 0.97); border-radius: 28px;
-        }
-        .result-overlay.active { opacity: 1; transform: scale(1); }
-        .win-text { color: var(--gold); text-shadow: 0 0 30px var(--gold); } 
-        .lose-text { color: var(--red); text-shadow: 0 0 30px var(--red); }
-        .draw-text { color: var(--white); text-shadow: 0 0 30px var(--white); }
-
-        .controls { display: flex; gap: 21px; justify-content: center; width: 100%; }
-        .choice-btn {
-            background: var(--bg-navy); border: 2px solid rgba(0, 210, 255, 0.4);
-            border-radius: 22px; padding: 16px; cursor: pointer; transition: 0.2s;
-            flex: 1; max-width: 140px; text-align: center;
-        }
-        .choice-btn:hover { border-color: var(--neon-blue); transform: translateY(-4px); }
-        .choice-btn.selected { border-color: var(--gold); background: rgba(241, 196, 15, 0.15); box-shadow: 0 0 15px rgba(241, 196, 15, 0.2); }
-        .choice-btn .icon { font-size: 53px; }
-        .choice-btn .name { font-size: 18px; font-weight: bold; color: var(--white); margin-top: 4px; }
-
-        /* --- BETTING AREA WIDE X 1.4 --- */
-        .betting-area {
-            background: var(--card-navy); padding: 21px; border-radius: 35px;
-            border: 1px solid rgba(230, 241, 255, 0.15); 
-            width: 100%; max-width: 728px; margin-top: 16px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .bet-input {
-            width: 80%; background: var(--bg-navy); border: 2px solid var(--neon-blue);
-            color: var(--gold); font-size: 36px; padding: 11px; border-radius: 16px;
-            font-family: 'Roboto Mono', monospace; text-align: center; outline: none; margin-bottom: 16px;
-        }
-
-        .btn-group { display: flex; gap: 11px; flex-wrap: wrap; justify-content: center; width: 100%; }
-        .btn-quick {
-            background: rgba(230, 241, 255, 0.05); border: 1px solid rgba(230, 241, 255, 0.3); 
-            color: var(--white); padding: 11px 19px; font-size: 18px; border-radius: 11px; 
-            cursor: pointer; font-weight: bold; transition: 0.2s; flex-grow: 1; max-width: 119px;
-        }
-        .btn-quick:hover { background: var(--neon-blue); color: var(--bg-navy); }
-        .btn-allin { background: var(--gold); color: var(--bg-navy); border: none; max-width: 140px; }
-        .btn-cancel { background: var(--red); color: var(--white); border: none; max-width: 140px; }
-
-        .disabled { opacity: 0.4; pointer-events: none; filter: grayscale(0.8); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oản Tù Tì — Trung Tâm Giải Trí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-navy:#0a192f; --card-navy:#112240; --neon-blue:#00d2ff;
+  --white:#e6f1ff; --gold:#f1c40f; --red:#ff4757;
+}
+*{box-sizing:border-box}
+body{
+  font-family:'Oswald',sans-serif;background-color:var(--bg-navy);
+  color:var(--white);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;margin:0;padding:14px;
+  overflow-x:hidden;user-select:none;
+  background-image:radial-gradient(circle at 50% -10%,#112240 0%,#0a192f 60%);
+}
+/* ---- HUB ---- */
+.navbar{
+  width:100%;max-width:728px;display:flex;justify-content:space-between;
+  align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;
+  background:var(--card-navy);border:2px solid rgba(0,210,255,.35);
+  border-radius:18px;padding:10px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+.nav-left{display:flex;align-items:center;gap:10px}
+.btn-home{
+  display:flex;align-items:center;gap:8px;color:var(--neon-blue);text-decoration:none;
+  border:2px solid rgba(0,210,255,.5);padding:8px 15px;border-radius:10px;
+  font-size:13px;text-transform:uppercase;font-weight:600;letter-spacing:1.5px;
+  background:rgba(0,210,255,.06);transition:.2s;
+}
+.btn-home svg{width:14px;height:14px}
+.btn-home:hover{background:var(--neon-blue);color:var(--bg-navy)}
+.icon-btn{
+  width:40px;height:40px;border-radius:10px;border:2px solid rgba(0,210,255,.5);
+  background:rgba(0,210,255,.06);color:var(--neon-blue);display:grid;place-items:center;
+  cursor:pointer;transition:.2s;
+}
+.icon-btn:hover{background:var(--neon-blue);color:var(--bg-navy)}
+.icon-btn svg{width:17px;height:17px}
+#sound-btn .off{display:none}
+#sound-btn.muted .on{display:none}
+#sound-btn.muted .off{display:block}
+#sound-btn.muted{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.2)}
+.nav-title{font-size:12px;letter-spacing:3px;color:rgba(255,255,255,.5);font-weight:600}
+.balance-box{
+  display:flex;align-items:center;gap:9px;color:var(--gold);font-size:21px;
+  font-family:'Roboto Mono',monospace;font-weight:700;
+  background:rgba(0,0,0,.35);padding:8px 18px;border-radius:12px;
+  border:2px solid rgba(241,196,15,.5);text-shadow:0 0 12px rgba(241,196,15,.35);
+}
+.balance-box svg{width:19px;height:19px;flex:none}
+/* ---- BÀN CHƠI ---- */
+.game-frame{
+  width:100%;max-width:728px;padding:21px;background-color:var(--card-navy);
+  border-radius:30px;border:2px solid var(--neon-blue);
+  display:flex;flex-direction:column;align-items:center;position:relative;
+  box-shadow:0 0 40px rgba(0,210,255,.15);
+}
+.timer-box{font-size:46px;color:var(--red);font-weight:800;margin-bottom:10px;line-height:1;font-family:'Roboto Mono',monospace}
+.timer-box.urgent{animation:urg .5s infinite alternate}
+@keyframes urg{from{transform:scale(1)}to{transform:scale(1.08)}}
+.arena{
+  display:flex;justify-content:space-around;align-items:center;
+  background:rgba(10,25,47,.95);padding:21px;border-radius:24px;
+  width:100%;position:relative;border:2px solid rgba(0,210,255,.4);
+  margin-bottom:21px;height:196px;
+}
+#game-status-msg{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  background:var(--bg-navy);border:2px solid var(--neon-blue);
+  padding:6px 28px;border-radius:16px;font-size:17px;
+  color:var(--neon-blue);text-transform:uppercase;white-space:nowrap;z-index:5;
+  box-shadow:0 0 15px rgba(0,210,255,.3);transition:all .3s ease;
+}
+.warning-msg{
+  font-size:23px !important;padding:10px 40px !important;
+  background:var(--red) !important;color:#fff !important;
+  border-color:#fff !important;box-shadow:0 0 30px var(--red) !important;
+  transform:translateX(-50%) scale(1.12) !important;z-index:20 !important;
+}
+.hand-side{display:flex;flex-direction:column;align-items:center;width:168px}
+.hand-icon{font-size:88px;filter:drop-shadow(0 0 12px rgba(255,255,255,.1))}
+.hand-icon.pop{animation:handPop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes handPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.hand-label{font-size:16px;color:var(--white);margin-top:7px;opacity:.6;font-weight:700;letter-spacing:1px}
+.vs-text{font-size:45px;color:var(--gold);font-weight:900;font-style:italic;text-shadow:0 0 15px rgba(241,196,15,.4)}
+.result-overlay{
+  position:absolute;inset:0;display:flex;justify-content:center;align-items:center;
+  font-size:74px;font-weight:900;opacity:0;pointer-events:none;
+  transition:.3s cubic-bezier(.175,.885,.32,1.275);
+  z-index:10;background:rgba(10,25,47,.97);border-radius:24px;
+}
+.result-overlay.active{opacity:1;transform:scale(1)}
+.win-text{color:var(--gold);text-shadow:0 0 30px var(--gold)}
+.lose-text{color:var(--red);text-shadow:0 0 30px var(--red)}
+.draw-text{color:var(--white);text-shadow:0 0 30px var(--white)}
+.controls{display:flex;gap:21px;justify-content:center;width:100%}
+.choice-btn{
+  background:var(--bg-navy);border:2px solid rgba(0,210,255,.4);
+  border-radius:22px;padding:16px;cursor:pointer;transition:.2s;
+  flex:1;max-width:140px;text-align:center;
+}
+.choice-btn:hover{border-color:var(--neon-blue);transform:translateY(-4px)}
+.choice-btn.selected{border-color:var(--gold);background:rgba(241,196,15,.15);box-shadow:0 0 15px rgba(241,196,15,.2)}
+.choice-btn .icon{font-size:50px}
+.choice-btn .name{font-size:17px;font-weight:700;color:var(--white);margin-top:4px;letter-spacing:1px}
+/* ---- CƯỢC ---- */
+.betting-area{
+  background:var(--card-navy);padding:21px;border-radius:30px;
+  border:1px solid rgba(230,241,255,.15);
+  width:100%;max-width:728px;margin-top:14px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.bet-input{
+  width:80%;background:var(--bg-navy);border:2px solid var(--neon-blue);
+  color:var(--gold);font-size:32px;padding:11px;border-radius:16px;
+  font-family:'Roboto Mono',monospace;text-align:center;outline:none;margin-bottom:16px;
+}
+.btn-group{display:flex;gap:11px;flex-wrap:wrap;justify-content:center;width:100%}
+.btn-quick{
+  background:rgba(230,241,255,.05);border:1px solid rgba(230,241,255,.3);
+  color:var(--white);padding:11px 19px;font-size:17px;border-radius:11px;
+  cursor:pointer;font-weight:700;transition:.2s;flex-grow:1;max-width:119px;
+  font-family:'Oswald';letter-spacing:1px;
+}
+.btn-quick:hover{background:var(--neon-blue);color:var(--bg-navy)}
+.btn-allin{background:var(--gold);color:var(--bg-navy);border:none;max-width:140px}
+.btn-cancel{background:var(--red);color:var(--white);border:none;max-width:140px}
+.disabled{opacity:.4;pointer-events:none;filter:grayscale(.8)}
+@media(max-width:560px){
+  .nav-title{display:none}
+  .hand-icon{font-size:64px}
+  .vs-text{font-size:30px}
+  .arena{height:170px;padding:14px}
+  .timer-box{font-size:36px}
+  .result-overlay{font-size:52px}
+  .bet-input{font-size:24px;width:100%}
+  .choice-btn{max-width:none;padding:12px}
+}
+</style>
 </head>
 <body>
-    <div class="navbar"><div class="balance-box" id="global-balance">💰 5,000,000</div></div>
 
-    <div class="game-frame">
-        <a href="index.html" class="btn-home">⬅ TRANG CHỦ</a>
-        <div class="timer-box" id="timer-display">20s</div>
-        <div class="arena">
-            <div id="game-status-msg">CHỜ RA CHIÊU...</div>
-            <div class="hand-side"><div class="hand-icon" id="player-hand">❔</div><div class="hand-label">BẠN</div></div>
-            <div class="vs-text">VS</div>
-            <div class="hand-side"><div class="hand-icon" id="bot-hand">❔</div><div class="hand-label">MÁY</div></div>
-            <div id="result-overlay" class="result-overlay"></div>
-        </div>
-        <div class="controls" id="controls">
-            <div class="choice-btn" id="btn-keo" onclick="selectHand('keo')"><div class="icon">✌️</div><div class="name">KÉO</div></div>
-            <div class="choice-btn" id="btn-bua" onclick="selectHand('bua')"><div class="icon">✊</div><div class="name">BÚA</div></div>
-            <div class="choice-btn" id="btn-bao" onclick="selectHand('bao')"><div class="icon">🖐️</div><div class="name">BAO</div></div>
-        </div>
-    </div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="ic-coin" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9" fill="none" stroke="#f1c40f" stroke-width="2.4"/>
+  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#f1c40f" stroke-width="1.8"/>
+</symbol>
+<symbol id="ic-snd" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/></g></symbol>
+<symbol id="ic-mute" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m16 9 5 6m0-6-5 6"/></g></symbol>
+<symbol id="ic-back" viewBox="0 0 24 24"><path d="M19 12H5m6-7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
 
-    <div class="betting-area" id="betting-area">
-        <input type="text" id="bet-amount" class="bet-input" placeholder="0" oninput="handleInput(this)">
-        <div class="btn-group">
-            <button class="btn-quick" onclick="addBet(100000)">+100K</button>
-            <button class="btn-quick" onclick="addBet(500000)">+500K</button>
-            <button class="btn-quick" onclick="addBet(1000000)">+1M</button>
-            <button class="btn-quick" onclick="addBet(5000000)">+5M</button>
-            <button class="btn-quick btn-allin" onclick="allIn()">TẤT TAY</button>
-            <button class="btn-quick btn-cancel" onclick="cancelBet()">HỦY</button>
-        </div>
-    </div>
+<!-- HUB -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="btn-home"><svg><use href="#ic-back"/></svg>TRANG CHỦ</a>
+    <button class="icon-btn" id="sound-btn" title="Âm thanh">
+      <svg class="on"><use href="#ic-snd"/></svg>
+      <svg class="off"><use href="#ic-mute"/></svg>
+    </button>
+  </div>
+  <div class="nav-title">OẢN TÙ TÌ · ĐẤU BOSS</div>
+  <div class="balance-box"><svg><use href="#ic-coin"/></svg><span id="global-balance">5.000.000</span></div>
+</nav>
 
-    <script>
-        // --- QUẢN LÝ TIỀN ---
-        let currentBet = 0; 
-        
-        function getBalance() {
-            let b = localStorage.getItem('userBalance');
-            if (b === null) { localStorage.setItem('userBalance', '5000000'); return 5000000; }
-            return parseInt(b);
-        }
-        
-        function updateUI() { 
-            let displayedBalance = getBalance() - currentBet;
-            document.getElementById('global-balance').innerText = "💰 " + displayedBalance.toLocaleString(); 
-        }
-        function saveBalance(a) { localStorage.setItem('userBalance', a.toString()); updateUI(); }
-        updateUI();
+<!-- BÀN CHƠI -->
+<div class="game-frame">
+  <div class="timer-box" id="timer-display">20s</div>
+  <div class="arena">
+    <div id="game-status-msg">CHỜ RA CHIÊU...</div>
+    <div class="hand-side"><div class="hand-icon" id="player-hand">?</div><div class="hand-label">BẠN</div></div>
+    <div class="vs-text">VS</div>
+    <div class="hand-side"><div class="hand-icon" id="bot-hand">?</div><div class="hand-label">MÁY</div></div>
+    <div id="result-overlay" class="result-overlay"></div>
+  </div>
+  <div class="controls" id="controls">
+    <button class="choice-btn" data-choice="keo"><div class="icon">✌️</div><div class="name">KÉO</div></button>
+    <button class="choice-btn" data-choice="bua"><div class="icon">✊</div><div class="name">BÚA</div></button>
+    <button class="choice-btn" data-choice="bao"><div class="icon">🖐️</div><div class="name">BAO</div></button>
+  </div>
+</div>
 
-        let timeLeft = 20; let isPlaying = true; let playerChoice = null;
-        let playerHistory = [];
-        const hands = { 'keo': '✌️', 'bua': '✊', 'bao': '🖐️' };
-        const winMap = { 'keo': 'bao', 'bua': 'keo', 'bao': 'bua' };
+<!-- CƯỢC -->
+<div class="betting-area" id="betting-area">
+  <input type="text" id="bet-amount" class="bet-input" placeholder="0">
+  <div class="btn-group" id="quick-btns">
+    <button class="btn-quick" data-add="100000">+100K</button>
+    <button class="btn-quick" data-add="500000">+500K</button>
+    <button class="btn-quick" data-add="1000000">+1M</button>
+    <button class="btn-quick" data-add="5000000">+5M</button>
+    <button class="btn-quick btn-allin" id="btn-allin">TẤT TAY</button>
+    <button class="btn-quick btn-cancel" id="btn-cancel">HỦY</button>
+  </div>
+</div>
 
-        function handleInput(el) {
-            let v = parseInt(el.value.replace(/,/g, '')) || 0;
-            let b = getBalance(); if (v > b) v = b;
-            el.value = v > 0 ? v.toLocaleString() : "";
-            currentBet = v; 
-            updateUI();
-        }
-        function addBet(a) {
-            let c = currentBet;
-            let b = getBalance(); let n = Math.min(c + a, b);
-            currentBet = n;
-            document.getElementById('bet-amount').value = n.toLocaleString();
-            updateStatusMsg("MỨC CƯỢC: " + n.toLocaleString());
-            updateUI();
-        }
-        function allIn() { 
-            let b = getBalance();
-            currentBet = b;
-            document.getElementById('bet-amount').value = b.toLocaleString(); 
-            updateStatusMsg("ALL-IN!");
-            updateUI();
-        }
-        function cancelBet() {
-            currentBet = 0; 
-            document.getElementById('bet-amount').value = ""; playerChoice = null;
-            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-            document.getElementById('player-hand').innerText = "❔";
-            updateStatusMsg("ĐÃ HỦY CƯỢC");
-            updateUI();
-        }
-        function updateStatusMsg(m) { document.getElementById('game-status-msg').innerText = m; }
+<script>
+/* ============ VÍ TIỀN CHUNG (key "userBalance") — cược chỉ "đang giữ" ============ */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => Math.round(n).toLocaleString('vi-VN');
+const wallet = {
+  bal: 0, held: 0, shown: 0, anim: null, el: $('#global-balance'),
+  load(){
+    const v = parseInt(String(localStorage.getItem('userBalance')||'').replace(/[.,\s]/g,''));
+    this.bal = isNaN(v) ? 5000000 : v; this.render();
+  },
+  render(){ this.el.textContent = fmt(this.bal - this.held); this.shown = this.bal - this.held },
+  set(v){
+    this.bal = Math.max(0, Math.round(v));
+    localStorage.setItem('userBalance', this.bal);
+    this.held = 0;
+    if(this.anim) cancelAnimationFrame(this.anim);
+    const from = this.shown, to = this.bal, t0 = performance.now();
+    const step = t => { const p = Math.min(1,(t-t0)/650), e = 1-Math.pow(1-p,3);
+      this.shown = Math.round(from+(to-from)*e); this.el.textContent = fmt(this.shown);
+      if(p<1) this.anim = requestAnimationFrame(step); else this.anim = null };
+    this.anim = requestAnimationFrame(step);
+  },
+  hold(v){ this.held = v; this.render() }
+};
+wallet.load();
+addEventListener('storage', e => { if(e.key === 'userBalance'){ wallet.load(); wallet.hold = currentBet; wallet.render() } });
 
-        function selectHand(c) {
-            if (!isPlaying) return;
-            if (currentBet <= 0) { 
-                let msgEl = document.getElementById('game-status-msg');
-                msgEl.innerText = "⚠️ HÃY CƯỢC TRƯỚC!";
-                msgEl.classList.add('warning-msg');
-                setTimeout(() => msgEl.classList.remove('warning-msg'), 1500); 
-                return; 
-            }
-            playerChoice = c;
-            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-            document.getElementById('btn-' + c).classList.add('selected');
-            document.getElementById('player-hand').innerText = hands[c];
-            updateStatusMsg("ĐÃ CHỌN: " + c.toUpperCase());
-            document.getElementById('game-status-msg').classList.remove('warning-msg'); 
-        }
+/* ============ ÂM THANH (WebAudio, chung khóa "muted" toàn hệ thống) ============ */
+const sound = {
+  muted: localStorage.getItem('muted') === '1', ctx: null,
+  ac(){ try{
+    if(!this.ctx){ const C = window.AudioContext || window.webkitAudioContext; if(!C) return null; this.ctx = new C() }
+    if(this.ctx.state === 'suspended'){ this.ctx.resume().catch(()=>{}) }
+    return this.ctx;
+  }catch(e){ return null } },
+  tone(f, dur=.1, type='sine', vol=.06, when=0, slide=0){
+    if(this.muted) return; const c = this.ac(); if(!c) return;
+    try{
+      const t = c.currentTime + when, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f+slide), t+dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t+.012);
+      g.gain.exponentialRampToValueAtTime(.0001, t+dur);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t+dur+.05);
+    }catch(e){}
+  },
+  click(){ this.tone(720,.05,'triangle',.05) },
+  chip(){ this.tone(520,.06,'triangle',.05); this.tone(780,.05,'triangle',.04,.05) },
+  tick(){ this.tone(1050,.05,'triangle',.05) },
+  reveal(){ this.tone(1250,.05,'triangle',.05); this.tone(1650,.06,'triangle',.04,.06) },
+  win(){ [523,659,784,1046].forEach((f,i)=>this.tone(f,.14,'sine',.07,i*.09)) },
+  lose(){ this.tone(240,.2,'sine',.045,0,-100) },
+  draw(){ this.tone(440,.1,'triangle',.05); this.tone(440,.1,'triangle',.04,.12) }
+};
+function syncSndBtn(){ $('#sound-btn').classList.toggle('muted', sound.muted) }
+syncSndBtn();
+ $('#sound-btn').addEventListener('click', () => {
+  sound.muted = !sound.muted;
+  try{ localStorage.setItem('muted', sound.muted ? '1' : '0') }catch(e){}
+  syncSndBtn();
+  if(!sound.muted) sound.click();
+});
+addEventListener('storage', e => {
+  if(e.key === 'muted'){ sound.muted = e.newValue === '1'; syncSndBtn() }
+});
 
-        let gameTimer = setInterval(() => {
-            if (isPlaying) {
-                timeLeft--; document.getElementById('timer-display').innerText = timeLeft + "s";
-                if (timeLeft <= 0) resolve();
-            }
-        }, 1000);
+/* ============ GAME (bot logic giữ nguyên) ============ */
+let timeLeft = 20, isPlaying = true, playerChoice = null, currentBet = 0;
+let playerHistory = [];
+const hands = { keo:'✌️', bua:'✊', bao:'🖐️' };
+const winMap = { keo:'bao', bua:'keo', bao:'bua' };
+const betInput = $('#bet-amount'), statusMsg = $('#game-status-msg');
 
-        function resolve() {
-            isPlaying = false;
-            document.getElementById('controls').classList.add('disabled');
-            document.getElementById('betting-area').classList.add('disabled');
-            let bal = getBalance();
+function updateStatusMsg(m){ statusMsg.textContent = m }
+function popHand(el, icon){
+  el.textContent = icon;
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+}
 
-            if (!playerChoice || currentBet <= 0) {
-                currentBet = 0; 
-                updateUI();
-                showRes("MISS", "draw-text"); updateStatusMsg("BỎ LỠ VÁN - HOÀN TIỀN");
-                setTimeout(reset, 3000); return;
-            }
+/* --- cược --- */
+betInput.addEventListener('input', () => {
+  let v = parseInt(betInput.value.replace(/[.,\s]/g,'')) || 0;
+  if(v > wallet.bal) v = wallet.bal;
+  betInput.value = v > 0 ? v.toLocaleString('vi-VN') : '';
+  currentBet = v;
+  wallet.hold(currentBet);
+  updateStatusMsg(v > 0 ? 'MỨC CƯỢC: ' + fmt(v) : 'CHỜ RA CHIÊU...');
+});
+ $$('#quick-btns .btn-quick').forEach(b => {
+  if(!b.dataset.add) return;
+  b.addEventListener('click', () => {
+    const n = Math.min(currentBet + (+b.dataset.add), wallet.bal);
+    currentBet = Math.max(0, n);
+    betInput.value = currentBet ? currentBet.toLocaleString('vi-VN') : '';
+    wallet.hold(currentBet);
+    updateStatusMsg('MỨC CƯỢC: ' + fmt(currentBet));
+    sound.chip();
+  });
+});
+ $('#btn-allin').addEventListener('click', () => {
+  currentBet = wallet.bal;
+  betInput.value = currentBet ? currentBet.toLocaleString('vi-VN') : '';
+  wallet.hold(currentBet);
+  updateStatusMsg('TẤT TAY!');
+  sound.chip();
+});
+ $('#btn-cancel').addEventListener('click', () => {
+  currentBet = 0; playerChoice = null;
+  betInput.value = '';
+  wallet.hold(0);
+  $$('.choice-btn').forEach(b => b.classList.remove('selected'));
+  $('#player-hand').textContent = '?';
+  updateStatusMsg('ĐÃ HỦY CƯỢC');
+  sound.click();
+});
 
-            // --- BOT LOGIC MỚI: KHÓ ĐOÁN VÀ "KHÔN" HƠN ---
-            let bot;
-            let botRand = Math.random();
-            
-            if (botRand < 0.35) {
-                // Khó hơn: 35% tỷ lệ Boss "nhìn thấu" và ra chiêu khắc chế trực tiếp lựa chọn (Boss auto thắng)
-                bot = Object.keys(winMap).find(k => winMap[k] === playerChoice);
-            } else if (botRand < 0.50 && playerHistory.length >= 1) {
-                // Đánh lừa tâm lý: 15% tỷ lệ Boss ra lại đúng chiêu mà bạn vừa ra ở ván trước
-                bot = playerHistory[playerHistory.length - 1];
-            } else {
-                // 50% Random hoàn toàn để người chơi không thể tìm ra quy luật cố định
-                bot = ['keo', 'bua', 'bao'][Math.floor(Math.random() * 3)];
-            }
-            // ---------------------------------------------
-            
-            playerHistory.push(playerChoice);
-            if (playerHistory.length > 5) playerHistory.shift();
+/* --- chọn chiêu --- */
+ $$('.choice-btn').forEach(btn => btn.addEventListener('click', () => {
+  if(!isPlaying) return;
+  const c = btn.dataset.choice;
+  if(currentBet <= 0){
+    statusMsg.textContent = 'HÃY CƯỢC TRƯỚC KHI RA CHIÊU!';
+    statusMsg.classList.add('warning-msg');
+    setTimeout(() => statusMsg.classList.remove('warning-msg'), 1500);
+    sound.lose();
+    return;
+  }
+  playerChoice = c;
+  $$('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  popHand($('#player-hand'), hands[c]);
+  statusMsg.classList.remove('warning-msg');
+  updateStatusMsg('ĐÃ CHỌN: ' + c.toUpperCase());
+  sound.click();
+}));
 
-            document.getElementById('bot-hand').innerText = hands[bot];
+/* --- vòng 20 giây --- */
+setInterval(() => {
+  if(!isPlaying) return;
+  timeLeft--;
+  $('#timer-display').textContent = Math.max(0, timeLeft) + 's';
+  $('#timer-display').classList.toggle('urgent', timeLeft <= 5);
+  if(timeLeft <= 3 && timeLeft > 0) sound.tick();
+  if(timeLeft <= 0) resolve();
+}, 1000);
 
-            let betAmount = currentBet;
-            currentBet = 0; 
+/* --- xử lý ván --- */
+function resolve(){
+  isPlaying = false;
+  $('#controls').classList.add('disabled');
+  $('#betting-area').classList.add('disabled');
+  $('#timer-display').classList.remove('urgent');
 
-            if (playerChoice === bot) {
-                showRes("HÒA", "draw-text"); updateStatusMsg("HÒA VỐN");
-                saveBalance(bal); 
-            } else if (winMap[playerChoice] === bot) {
-                showRes("THẮNG", "win-text"); saveBalance(bal + betAmount); 
-                updateStatusMsg("+" + betAmount.toLocaleString());
-            } else {
-                showRes("THUA", "lose-text"); saveBalance(bal - betAmount); 
-                updateStatusMsg("-" + betAmount.toLocaleString());
-            }
-            
-            setTimeout(reset, 4000);
-        }
+  if(!playerChoice || currentBet <= 0){
+    currentBet = 0;
+    wallet.hold(0);
+    updateStatusMsg('BỎ LỠ VÁN — HOÀN TIỀN');
+    showRes('MISS', 'draw-text');
+    sound.draw();
+    setTimeout(reset, 3000);
+    return;
+  }
 
-        function showRes(t, c) {
-            let o = document.getElementById('result-overlay');
-            o.innerText = t; o.className = "result-overlay active " + c;
-        }
-        function reset() {
-            timeLeft = 20; isPlaying = true; playerChoice = null;
-            currentBet = 0;
-            document.getElementById('player-hand').innerText = "❔";
-            document.getElementById('bot-hand').innerText = "❔";
-            document.getElementById('bet-amount').value = ""; 
-            document.getElementById('result-overlay').classList.remove('active');
-            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-            document.getElementById('controls').classList.remove('disabled');
-            document.getElementById('betting-area').classList.remove('disabled');
-            updateStatusMsg("VÁN MỚI BẮT ĐẦU!");
-            updateUI();
-        }
-    </script>
+  /* Bot: 35% nhìn thấu khắc chế, 15% ra lại chiêu bạn vừa đánh, 50% random */
+  let bot;
+  const r = Math.random();
+  if(r < 0.35){
+    bot = Object.keys(winMap).find(k => winMap[k] === playerChoice);
+  } else if(r < 0.5 && playerHistory.length >= 1){
+    bot = playerHistory[playerHistory.length - 1];
+  } else {
+    bot = ['keo','bua','bao'][Math.floor(Math.random()*3)];
+  }
+
+  playerHistory.push(playerChoice);
+  if(playerHistory.length > 5) playerHistory.shift();
+
+  popHand($('#bot-hand'), hands[bot]);
+  sound.reveal();
+
+  const bet = currentBet;
+  currentBet = 0;
+
+  if(playerChoice === bot){
+    showRes('HÒA', 'draw-text');
+    updateStatusMsg('HÒA VỐN');
+    wallet.set(wallet.bal);          /* hoàn cược */
+    sound.draw();
+  } else if(winMap[playerChoice] === bot){
+    showRes('THẮNG', 'win-text');
+    updateStatusMsg('+' + fmt(bet) + 'đ');
+    wallet.set(wallet.bal + bet);
+    sound.win();
+  } else {
+    showRes('THUA', 'lose-text');
+    updateStatusMsg('-' + fmt(bet) + 'đ');
+    wallet.set(wallet.bal - bet);
+    sound.lose();
+  }
+  setTimeout(reset, 4000);
+}
+
+function showRes(t, c){
+  const o = $('#result-overlay');
+  o.textContent = t;
+  o.className = 'result-overlay active ' + c;
+}
+function reset(){
+  timeLeft = 20; isPlaying = true; playerChoice = null;
+  currentBet = 0;
+  wallet.hold(0);
+  $('#player-hand').textContent = '?';
+  $('#bot-hand').textContent = '?';
+  betInput.value = '';
+  $('#result-overlay').classList.remove('active');
+  $$('.choice-btn').forEach(b => b.classList.remove('selected'));
+  $('#controls').classList.remove('disabled');
+  $('#betting-area').classList.remove('disabled');
+  $('#timer-display').classList.remove('urgent');
+  updateStatusMsg('VÁN MỚI BẮT ĐẦU!');
+  wallet.render();
+}
+</script>
 </body>
 </html>
