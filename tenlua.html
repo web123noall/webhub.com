@@ -4,75 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tên Lửa — Trung Tâm Giải Trí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --primary:#10b981;
-  --danger:#ef4444;
-  --warning:#f59e0b;
-  --bg-dark:#0b0f19;
-  --panel-bg:rgba(26,30,46,.7);
+  --bg:#0c1831; --card:#14213d; --accent:#00d2ff;
+  --danger:#ff4757; --warning:#f1c40f; --gold:#f1c40f;
 }
 *{box-sizing:border-box}
 body{
-  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-  background:var(--bg-dark);color:#fff;text-align:center;
-  padding:16px 10px 50px;margin:0;overflow-x:hidden;
+  font-family:'Oswald',sans-serif;background-color:var(--bg);color:#fff;
+  text-align:center;padding:16px 10px 50px;margin:0;overflow-x:hidden;
   display:flex;flex-direction:column;align-items:center;
+  background-image:radial-gradient(circle at 50% 0%,#14213d 0%,#0c1831 60%);
 }
 .container{width:100%;max-width:820px}
-/* ---- HUB ---- */
-.header{
-  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
-  padding:12px 20px;background:var(--panel-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-radius:16px;margin-bottom:16px;border:1px solid rgba(255,255,255,.1);
-  box-shadow:0 8px 32px rgba(0,0,0,.3);
+/* ---- HUB (khuôn chuẩn hệ thống) ---- */
+.navbar{
+  width:100%;max-width:820px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;padding:10px 16px;margin-bottom:16px;
+  background:var(--card);border:2px solid rgba(0,210,255,.35);border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
-.h-left{display:flex;align-items:center;gap:12px}
+.nav-left{display:flex;align-items:center;gap:10px}
 .h-home{
-  display:flex;align-items:center;gap:8px;color:var(--primary);text-decoration:none;
-  font-weight:700;font-size:15px;transition:.2s;letter-spacing:.5px;
+  display:flex;align-items:center;gap:8px;color:var(--accent);text-decoration:none;
+  border:2px solid rgba(0,210,255,.5);padding:8px 15px;border-radius:10px;
+  font-size:13px;text-transform:uppercase;font-weight:600;letter-spacing:1.5px;
+  background:rgba(0,210,255,.06);transition:.2s;
 }
-.h-home svg{width:16px;height:16px}
-.h-home:hover{text-shadow:0 0 10px var(--primary)}
-.h-title{font-size:13px;letter-spacing:3px;color:rgba(255,255,255,.5);font-weight:700}
-.h-right{display:flex;align-items:center;gap:10px}
+.h-home svg{width:14px;height:14px}
+.h-home:hover{background:var(--accent);color:#04202b}
 .icon-btn{
-  width:40px;height:40px;border-radius:12px;border:1px solid rgba(16,185,129,.45);
-  background:rgba(16,185,129,.08);color:var(--primary);display:grid;place-items:center;
+  width:40px;height:40px;border-radius:10px;border:2px solid rgba(0,210,255,.5);
+  background:rgba(0,210,255,.06);color:var(--accent);display:grid;place-items:center;
   cursor:pointer;transition:.2s;
 }
-.icon-btn:hover{background:var(--primary);color:#fff;box-shadow:0 0 12px rgba(16,185,129,.4)}
+.icon-btn:hover{background:var(--accent);color:#04202b}
 .icon-btn svg{width:17px;height:17px}
 #sound-btn .off{display:none}
 #sound-btn.muted .on{display:none}
 #sound-btn.muted .off{display:block}
-#sound-btn.muted{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.15)}
+#sound-btn.muted{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.2)}
+.nav-title{font-size:12px;letter-spacing:3px;color:rgba(255,255,255,.5);font-weight:600}
+.nav-right{display:flex;align-items:center;gap:10px}
 .balance-box{
-  display:flex;align-items:center;gap:9px;padding:9px 16px;border-radius:12px;
-  border:1px solid rgba(252,211,77,.45);background:rgba(252,211,77,.07);
-  font-weight:700;font-size:18px;color:#fcd34d;text-shadow:0 0 10px rgba(252,211,77,.35);
+  display:flex;align-items:center;gap:9px;padding:8px 18px;border-radius:12px;
+  border:2px solid rgba(241,196,15,.5);background:rgba(0,0,0,.35);
+  font-family:'Roboto Mono',monospace;font-weight:700;font-size:19px;color:var(--gold);
+  text-shadow:0 0 10px rgba(241,196,15,.35);
 }
 .balance-box svg{width:19px;height:19px;flex:none}
 /* ---- LỊCH SỬ NỔ ---- */
 .history-area{display:flex;justify-content:flex-start;gap:10px;margin-bottom:16px;overflow-x:auto;padding:8px 4px;scrollbar-width:none}
 .history-area::-webkit-scrollbar{display:none}
 .history-item{
-  padding:7px 15px;border-radius:20px;font-weight:800;font-size:14px;min-width:55px;
-  text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.3);letter-spacing:.5px;flex:none;
-  animation:histIn .3s;
+  padding:7px 15px;border-radius:20px;font-family:'Roboto Mono',monospace;font-weight:700;
+  font-size:13px;min-width:58px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.3);
+  letter-spacing:.5px;flex:none;animation:histIn .3s;
 }
 @keyframes histIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
-.history-high{background:rgba(16,185,129,.2);color:var(--primary);border:1px solid var(--primary)}
-.history-low{background:rgba(239,68,68,.2);color:var(--danger);border:1px solid var(--danger)}
-/* ---- KHU GAME PARALLAX ---- */
+.history-high{background:rgba(0,210,255,.12);color:var(--accent);border:1px solid rgba(0,210,255,.6)}
+.history-low{background:rgba(255,71,87,.15);color:var(--danger);border:1px solid rgba(255,71,87,.6)}
+/* ---- KHU GAME (giữ nguyên Effects) ---- */
 .game-area{
   background:linear-gradient(180deg,#090f1e 0%,#171738 100%);
-  height:480px;border-radius:20px;border:1px solid rgba(255,255,255,.15);
+  height:480px;border-radius:20px;border:2px solid rgba(0,210,255,.3);
   margin-bottom:20px;position:relative;overflow:hidden;
-  box-shadow:inset 0 0 80px rgba(0,0,0,.8),0 10px 30px rgba(0,0,0,.5);
+  box-shadow:inset 0 0 80px rgba(0,0,0,.8),0 0 25px rgba(0,210,255,.15);
 }
 .game-area.boom::after{
-  content:'';position:absolute;inset:0;background:rgba(239,68,68,.35);z-index:40;
+  content:'';position:absolute;inset:0;background:rgba(255,71,87,.35);z-index:40;
   animation:boomFlash .55s forwards;pointer-events:none;
 }
 @keyframes boomFlash{from{opacity:1}to{opacity:0}}
@@ -88,7 +90,7 @@ body{
   background-size:150px 150px;
 }
 .stars-bg-2{
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="45" cy="80" r="1.5" fill="white" opacity="0.9"/><circle cx="160" cy="150" r="2" fill="white" opacity="0.8"/><circle cx="120" cy="20" r="1.2" fill="#fcd34d" opacity="0.7"/><circle cx="30" cy="190" r="1.8" fill="#a6d6f5" opacity="0.8"/></svg>');
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="45" cy="80" r="1.5" fill="white" opacity="0.9"/><circle cx="160" cy="150" r="2" fill="white" opacity="0.8"/><circle cx="120" cy="20" r="1.2" fill="#f1c40f" opacity="0.7"/><circle cx="30" cy="190" r="1.8" fill="#a6d6f5" opacity="0.8"/></svg>');
   background-size:250px 250px;
 }
 .scrolling-slow{animation:scrollBg 6s linear infinite}
@@ -121,65 +123,71 @@ body{
 }
 .text-box{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:250px}
 #multiplier{
-  font-size:110px;color:var(--primary);font-weight:900;
-  font-family:'Courier New',Courier,monospace;line-height:1;
-  text-shadow:0 0 20px rgba(16,185,129,.6),0 5px 15px rgba(0,0,0,.5);transition:color .3s;
+  font-size:104px;color:var(--accent);font-weight:700;
+  font-family:'Roboto Mono',monospace;line-height:1;
+  text-shadow:0 0 20px rgba(0,210,255,.6),0 5px 15px rgba(0,0,0,.5);transition:color .3s;
 }
 #status{
-  font-size:18px;font-weight:600;color:#e2e8f0;text-shadow:0 2px 4px rgba(0,0,0,.8);
-  margin-top:10px;letter-spacing:.5px;background:rgba(0,0,0,.3);padding:5px 15px;border-radius:20px;
+  font-size:17px;font-weight:600;color:#e2e8f0;text-shadow:0 2px 4px rgba(0,0,0,.8);
+  margin-top:10px;letter-spacing:1.5px;text-transform:uppercase;
+  background:rgba(0,0,0,.35);padding:5px 16px;border-radius:20px;border:1px solid rgba(0,210,255,.25);
 }
 #parachute-container{
   position:absolute;font-size:70px;display:none;z-index:15;
   filter:drop-shadow(0 10px 10px rgba(0,0,0,.5));transform:translate(-50%,-50%);
 }
 .float-win{
-  position:absolute;font-weight:900;font-size:30px;color:#fcd34d;z-index:20;pointer-events:none;
+  position:absolute;font-family:'Roboto Mono',monospace;font-weight:700;font-size:30px;
+  color:var(--gold);z-index:20;pointer-events:none;
   text-shadow:0 2px 8px rgba(0,0,0,.8);animation:floatWin 1.4s forwards;
 }
 @keyframes floatWin{0%{opacity:1;transform:translateY(0) scale(.7)}25%{transform:translateY(-24px) scale(1.15)}100%{opacity:0;transform:translateY(-90px) scale(1)}}
-/* ---- ĐIỀU KHIỂN ---- */
+/* ---- ĐIỀU KHIỂN (panel khuôn hệ thống) ---- */
 .controls{
-  background:var(--panel-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  padding:28px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.5);
-  border:1px solid rgba(255,255,255,.05);
+  background:var(--card);padding:26px;border-radius:24px;
+  border:2px solid rgba(0,210,255,.2);
+  box-shadow:inset 0 0 25px rgba(0,0,0,.45),0 10px 30px rgba(0,0,0,.4);
 }
 .notif-box{
-  background:rgba(0,0,0,.4);color:#fcd34d;padding:14px;border-radius:12px;
-  font-weight:600;font-size:16px;margin-bottom:22px;border-left:5px solid var(--primary);
-  text-align:center;min-height:52px;transition:border-color .3s,color .3s;
+  background:rgba(0,0,0,.4);color:var(--gold);padding:14px;border-radius:12px;
+  font-weight:600;font-size:15px;margin-bottom:20px;border-left:5px solid var(--accent);
+  text-align:center;min-height:52px;transition:border-color .3s,color .3s;letter-spacing:.5px;
 }
-.bet-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:22px}
+.bet-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-bottom:20px}
 .bet-presets button{
-  background:rgba(16,185,129,.1);color:var(--primary);border:1px solid rgba(16,185,129,.4);
-  padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;
+  background:rgba(0,0,0,.3);color:#fff;border:2px solid rgba(0,210,255,.35);
+  padding:9px 16px;border-radius:12px;font-family:'Roboto Mono',monospace;font-weight:700;
+  font-size:13px;cursor:pointer;transition:all .2s;letter-spacing:.5px;
 }
-.bet-presets button:hover{background:var(--primary);color:#fff;box-shadow:0 0 15px rgba(16,185,129,.4);transform:translateY(-2px)}
-.input-row{display:flex;justify-content:center;gap:20px;margin-bottom:22px;flex-wrap:wrap}
+.bet-presets button:hover{border-color:var(--accent);color:var(--accent)}
+.bet-presets button[data-act="allin"]{border-color:rgba(241,196,15,.55);color:var(--gold)}
+.bet-presets button[data-act="allin"]:hover{border-color:var(--gold)}
+.input-row{display:flex;justify-content:center;gap:20px;margin-bottom:20px;flex-wrap:wrap}
 .input-group{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
-.input-group label{font-size:13px;color:#94a3b8;font-weight:600;padding-left:5px}
+.input-group label{font-size:12px;color:rgba(255,255,255,.5);font-weight:600;padding-left:5px;letter-spacing:1.5px;text-transform:uppercase}
 input{
-  padding:15px;font-size:18px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
-  background:rgba(0,0,0,.3);color:#fff;width:220px;text-align:center;font-weight:700;transition:.3s;
+  padding:14px;font-size:18px;border-radius:12px;border:2px solid rgba(0,210,255,.35);
+  background:rgba(0,0,0,.35);color:#fff;width:220px;text-align:center;font-weight:700;
+  font-family:'Roboto Mono',monospace;transition:.3s;outline:none;
 }
-input::placeholder{color:#64748b;font-weight:400}
-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 15px rgba(16,185,129,.3);background:rgba(0,0,0,.5)}
+input::placeholder{color:rgba(255,255,255,.3);font-weight:400}
+input:focus{border-color:var(--accent);box-shadow:0 0 15px rgba(0,210,255,.3)}
 input.locked{opacity:.45;pointer-events:none}
-.action-area{display:flex;justify-content:center;gap:18px;align-items:center;flex-wrap:wrap}
+.action-area{display:flex;justify-content:center;gap:16px;align-items:center;flex-wrap:wrap}
 .btn-main{
-  padding:18px 38px;font-size:19px;cursor:pointer;border:none;border-radius:14px;font-weight:900;
-  text-transform:uppercase;transition:.2s;box-shadow:0 6px 0 rgba(0,0,0,.3);letter-spacing:1px;
+  padding:16px 36px;font-size:18px;cursor:pointer;border:none;border-radius:14px;font-weight:700;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;transition:.2s;letter-spacing:2px;
+  box-shadow:0 6px 0 rgba(0,0,0,.35);
 }
 .btn-main:active{transform:translateY(6px);box-shadow:none}
-#btn-place-bet{background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.3)}
-#btn-place-bet:hover{box-shadow:0 6px 0 #047857,0 10px 20px rgba(16,185,129,.4)}
-#btn-cancel-bet{background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff;display:none}
-#btn-cancel-bet:hover{box-shadow:0 6px 0 #b91c1c,0 10px 20px rgba(239,68,68,.4)}
+#btn-place-bet{background:var(--accent);color:#04202b;box-shadow:0 6px 0 #06718a,0 0 25px rgba(0,210,255,.4)}
+#btn-place-bet:hover{filter:brightness(1.1)}
+#btn-cancel-bet{background:var(--danger);color:#fff;box-shadow:0 6px 0 #8e1f2a,0 0 20px rgba(255,71,87,.35);display:none}
 #btn-jump{
-  background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;display:none;
-  text-shadow:0 2px 4px rgba(0,0,0,.3);animation:jumpPulse 1s infinite;
+  background:var(--warning);color:#3a2f05;display:none;
+  box-shadow:0 6px 0 #8a6d24,0 0 25px rgba(241,196,15,.45);
+  animation:jumpPulse 1s infinite;
 }
-#btn-jump:hover{box-shadow:0 6px 0 #b45309,0 10px 20px rgba(245,158,11,.4)}
 @keyframes jumpPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 @media(max-width:600px){
   .center-flight-group{flex-direction:column;gap:10px}
@@ -188,6 +196,7 @@ input.locked{opacity:.45;pointer-events:none}
   input{width:100%}
   .input-group{width:100%}
   .btn-main{width:100%}
+  .nav-title{display:none}
 }
 </style>
 </head>
@@ -195,8 +204,8 @@ input.locked{opacity:.45;pointer-events:none}
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="ic-coin" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="9" fill="none" stroke="#fcd34d" stroke-width="2.4"/>
-  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#fcd34d" stroke-width="1.8"/>
+  <circle cx="12" cy="12" r="9" fill="none" stroke="#f1c40f" stroke-width="2.4"/>
+  <circle cx="12" cy="12" r="4.2" fill="none" stroke="#f1c40f" stroke-width="1.8"/>
 </symbol>
 <symbol id="ic-snd" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/></g></symbol>
 <symbol id="ic-mute" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m16 9 5 6m0-6-5 6"/></g></symbol>
@@ -204,19 +213,20 @@ input.locked{opacity:.45;pointer-events:none}
 </defs></svg>
 
 <div class="container">
-  <div class="header">
-    <div class="h-left">
+  <!-- HUB -->
+  <nav class="navbar">
+    <div class="nav-left">
       <a href="index.html" class="h-home"><svg><use href="#ic-back"/></svg>TRANG CHỦ</a>
-      <span class="h-title">TÊN LỬA · CRASH</span>
+      <span class="nav-title">TÊN LỬA · CRASH</span>
     </div>
-    <div class="h-right">
+    <div class="nav-right">
       <button class="icon-btn" id="sound-btn" title="Âm thanh">
         <svg class="on"><use href="#ic-snd"/></svg>
         <svg class="off"><use href="#ic-mute"/></svg>
       </button>
       <div class="balance-box"><svg><use href="#ic-coin"/></svg><span id="global-balance">5.000.000</span></div>
     </div>
-  </div>
+  </nav>
 
   <div class="history-area" id="history-box"></div>
 
@@ -355,8 +365,8 @@ function notify(msg, type='info'){
   const box = $('#notif-box');
   box.innerText = msg;
   if(type === 'error'){ box.style.borderColor = 'var(--danger)'; box.style.color = 'var(--danger)' }
-  else if(type === 'success'){ box.style.borderColor = 'var(--primary)'; box.style.color = 'var(--primary)' }
-  else{ box.style.borderColor = '#3b82f6'; box.style.color = '#fcd34d' }
+  else if(type === 'success'){ box.style.borderColor = 'var(--accent)'; box.style.color = 'var(--accent)' }
+  else{ box.style.borderColor = '#3b82f6'; box.style.color = 'var(--gold)' }
 }
 
 /* ============ LỊCH SỬ NỔ ============ */
@@ -384,17 +394,14 @@ renderHistory();
   const btn = e.target.closest('button'); if(!btn) return;
   if(hasPlacedBet) return;
   const act = btn.dataset.act;
-  if(act === 'add'){
-    betInput.value = (parseInt(betInput.value) || 0) + (+btn.dataset.val);
-    sound.chip();
-  }
+  if(act === 'add'){ betInput.value = (parseInt(betInput.value) || 0) + (+btn.dataset.val); sound.chip() }
   else if(act === 'mul'){ betInput.value = (parseInt(betInput.value) || 0) * 2; sound.chip() }
   else if(act === 'half'){ betInput.value = Math.max(1000, Math.floor((parseInt(betInput.value) || 0) / 2)); sound.chip() }
   else if(act === 'clear'){ betInput.value = ''; sound.click() }
   else if(act === 'allin'){ betInput.value = wallet.bal; sound.chip() }
 });
 
-/* ============ ĐẶT / HỦY CƯỢC (tiền cược khóa vào biến) ============ */
+/* ============ ĐẶT / HỦY CƯỢC ============ */
  $('#btn-place-bet').addEventListener('click', () => {
   if(hasPlacedBet){ notify('Bạn đã đặt cược rồi!', 'error'); sound.error(); return }
   const bet = parseInt(betInput.value);
@@ -409,10 +416,9 @@ renderHistory();
   $('#btn-place-bet').style.display = 'none';
   $('#btn-cancel-bet').style.display = 'inline-block';
 });
-
  $('#btn-cancel-bet').addEventListener('click', () => {
   if(!hasPlacedBet) return;
-  wallet.add(betAmount);            /* hoàn đúng số đã cược */
+  wallet.add(betAmount);
   hasPlacedBet = false;
   unlockBet();
   notify('Đã hủy cược, hoàn lại ' + fmt(betAmount) + 'đ.', 'info');
@@ -485,17 +491,13 @@ function launchRocket(){
   $('#status').innerText = isPlaying ? 'Đang bay... Canh chốt lời!' : 'Đang bay... (Khán giả)';
 
   const multEl = $('#multiplier');
-
-  /* tiếng động cơ tăng pitch theo hệ số */
   engineTimer = setInterval(() => sound.engine(currentMult), 260);
-
   const autoVal = parseFloat(autoInput.value) || 0;
 
   function frame(now){
     const t = (now - launchTime) / 1000;
     currentMult = Math.exp(GROWTH * t);
 
-    /* auto chốt lời */
     if(isPlaying && !hasCashedOut && autoVal > 1.0 && currentMult >= autoVal){
       jumpOut();
     }
@@ -509,14 +511,13 @@ function launchRocket(){
 
     multEl.innerText = currentMult.toFixed(2) + 'x';
 
-    /* vượt tầng khí quyển */
     if(currentMult >= 2.5){
       $('#sky-layer').style.opacity = '0';
       $('#clouds-layer').style.opacity = '0';
       $('#stars-bg-1').style.opacity = '1';
       $('#stars-bg-2').style.opacity = '1';
       multEl.style.color = 'var(--warning)';
-      multEl.style.textShadow = '0 0 30px rgba(245,158,11,.6),0 5px 15px rgba(0,0,0,.5)';
+      multEl.style.textShadow = '0 0 30px rgba(241,196,15,.6),0 5px 15px rgba(0,0,0,.5)';
     }
 
     gameRaf = requestAnimationFrame(frame);
@@ -532,7 +533,7 @@ function handleCrash(){
 
   const multEl = $('#multiplier');
   multEl.style.color = 'var(--danger)';
-  multEl.style.textShadow = '0 0 30px rgba(239,68,68,.6),0 5px 15px rgba(0,0,0,.5)';
+  multEl.style.textShadow = '0 0 30px rgba(255,71,87,.6),0 5px 15px rgba(0,0,0,.5)';
   $('#status').innerText = 'BÙM! Tên lửa đã nổ.';
 
   pushHistory(crashPoint.toFixed(2) + 'x');
@@ -573,7 +574,6 @@ function jumpOut(){
 
   notify('Chốt lời thành công: +' + fmt(win) + 'đ (Mức ' + currentMult.toFixed(2) + 'x)', 'success');
 
-  /* chữ tiền bay lên giữa màn bay */
   const ga = $('#game-area');
   const fw = document.createElement('div');
   fw.className = 'float-win';
@@ -583,7 +583,6 @@ function jumpOut(){
   ga.appendChild(fw);
   setTimeout(() => fw.remove(), 1400);
 
-  /* dù rơi từ vị trí tên lửa */
   const para = $('#parachute-container');
   const rocket = $('#rocket-wrapper');
   const rocketRect = rocket.getBoundingClientRect();
@@ -618,8 +617,8 @@ function resetGameRound(){
   betInput.value = '';
 
   const multEl = $('#multiplier');
-  multEl.style.color = 'var(--primary)';
-  multEl.style.textShadow = '0 0 20px rgba(16,185,129,.6),0 5px 15px rgba(0,0,0,.5)';
+  multEl.style.color = 'var(--accent)';
+  multEl.style.textShadow = '0 0 20px rgba(0,210,255,.6),0 5px 15px rgba(0,0,0,.5)';
   multEl.innerText = '1.00x';
   $('#status').innerText = 'Nhập tiền và đặt cược';
   $('#btn-jump').style.display = 'none';
