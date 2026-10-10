@@ -21,9 +21,14 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 .game-card{background:var(--card-bg);border:3px solid rgba(0,210,255,.2);border-radius:30px;height:250px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-decoration:none;color:#fff;transition:all .3s ease;box-shadow:inset 0 0 20px rgba(0,0,0,.5);padding-top:30px;padding-bottom:25px;box-sizing:border-box;position:relative}
 .game-card:hover{transform:translateY(-10px);border-color:var(--accent);box-shadow:0 0 20px rgba(0,210,255,.4)}
 .game-icon{height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:15px}
-.game-icon svg{width:74px;height:74px;color:var(--accent);animation:rgbHue 10s linear infinite}
-@keyframes rgbHue{from{filter:hue-rotate(0deg) drop-shadow(0 0 8px rgba(0,210,255,.35))}to{filter:hue-rotate(360deg) drop-shadow(0 0 8px rgba(0,210,255,.35))}}
-.game-card:hover .game-icon svg{animation-duration:.2s}
+/* ---- RGB dịu nhẹ: sóng màu nhấp nhô, mỗi chặng tăng/giảm từ từ (ease-in-out) ---- */
+.game-icon svg{width:74px;height:74px;color:var(--accent);animation:rgbHue 15s ease-in-out infinite}
+@keyframes rgbHue{
+  0%,100%{filter:hue-rotate(0deg) drop-shadow(0 0 7px rgba(0,210,255,.28))}
+  33%{filter:hue-rotate(120deg) drop-shadow(0 0 7px rgba(0,210,255,.28))}
+  66%{filter:hue-rotate(240deg) drop-shadow(0 0 7px rgba(0,210,255,.28))}
+}
+.game-card:hover .game-icon svg{animation-duration:6s}
 .game-name{height:35px;display:flex;align-items:center;justify-content:center;font-size:24px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 .play-btn{margin-top:auto;padding:8px 25px;background:var(--accent);color:#000;border-radius:10px;font-size:15px;text-transform:uppercase;opacity:0;transition:.3s;font-weight:700;letter-spacing:1px}
 .game-card:hover .play-btn{opacity:1}
@@ -246,7 +251,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 /* ====== CÀI ĐẶT MƯỢN TIỀN (KHÔNG LÃI) ======
    LOAN_MS      : thời hạn trả (10 phút) — quá hạn tự động thu lại ĐÚNG số tiền mượn
-   BORROW_CD_MS : mỗi 30 phút được mượn 1 lần (tính từ lúc mượn)
+   BORROW_CD_MS : hồi chiêu 30 phút — CHỪNG NÀO ĐỂ QUÁ HẠN mới phải chờ
    LOAN_RATE    : 1 = KHÔNG LÃI, mượn bao nhiêu trả đúng bấy nhiêu
    MAX_VAY      : tối đa 10 triệu / lần mượn */
 const LOAN_MS      = 10 * 60 * 1000;
@@ -345,7 +350,7 @@ function renderBorrowModal(){
         <span class="loan-cur">VND</span>
       </div>
       <div class="loan-calc" id="loan-calc"></div>
-      <div class="loan-note"><b>KHÔNG LÃI</b> — mượn bao nhiêu trả đúng bấy nhiêu. Mượn tối đa <b>10 triệu</b>, mỗi <b>30 phút</b> được mượn <b>1 lần</b>. Trả trong <b>10 phút</b>, quá hạn hệ thống tự động thu lại đúng số tiền mượn.</div>
+      <div class="loan-note"><b>KHÔNG LÃI</b> — mượn bao nhiêu trả đúng bấy nhiêu, tối đa <b>10 triệu</b>. Trả trong <b>10 phút</b>, <b>trả xong là mượn lại được ngay</b>. Nếu để quá hạn bị tự động thu thì phải chờ đủ <b>30 phút</b> (tính từ lúc mượn) mới được mượn tiếp.</div>
       <div class="loan-err" id="loan-err"></div>
       <div class="loan-actions">
         <button class="modal-btn gold" id="btn-muon-ok">MƯỢN NGAY</button>
@@ -413,9 +418,9 @@ function renderDebtModal(loan){
     }
     localStorage.setItem('userBalance', cur - loan.total);
     clearLoan();
+    localStorage.removeItem('lastBorrowAt'); // TRẢ XONG -> xóa hồi chiêu, mượn lại được NGAY
     closeModal(); refreshBalance(); updateMuonBtn(); tick();
-    const cd = getCooldownLeft();
-    showToast(`Đã trả xong <b>${fmt(loan.total)}</b>. Không nợ nần gì nữa!${cd > 0 ? ` (mượn lại sau ${fmtCount(cd)})` : ''}`, 'success');
+    showToast(`Đã trả xong <b>${fmt(loan.total)}</b>. Không nợ nần gì nữa — mượn lại được ngay!`, 'success');
   };
   $('btn-debt-no').onclick = closeModal;
   tick();
