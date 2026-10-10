@@ -60,8 +60,14 @@ body{
 }
 .pill .p-lbl{font-size:11px;letter-spacing:1px;color:rgba(255,255,255,.75)}
 .pill.money{border:3px solid var(--gold-text);color:var(--gold-text)}
+.pill.money.negative{border-color:#EF5350;color:#EF5350}
 .pill.rice{border:3px solid #81C784;color:#81C784}
 .pill.bump{transform:scale(1.08)}
+/* pill khoản nợ (đồng bộ với trang chủ) */
+.pill.debt{border:3px solid #EF5350;color:#EF5350;cursor:pointer}
+.pill.debt:hover{filter:brightness(1.2)}
+.pill.debt.urgent{animation:debtBlink .6s infinite}
+@keyframes debtBlink{50%{opacity:.3}}
 /* toolbar công cụ */
 .toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin-bottom:22px;background:rgba(0,0,0,.25);padding:10px 20px;border-radius:15px}
 .tool-btn{
@@ -183,6 +189,10 @@ body{
     <button class="nav-btn" id="sound-btn" title="Âm thanh">
       <span class="on">🔊</span><span class="off">🔇</span>
     </button>
+    <div class="pill debt" id="debt-pill" style="display:none" title="Bấm để về Trang Chủ trả nợ">
+      <span>🧾</span>
+      <span><span class="p-lbl">NỢ</span><br><span id="debt-display">--</span></span>
+    </div>
     <div class="pill money" id="money-pill">
       <span>💰</span>
       <span><span class="p-lbl">VÍ</span><br><span id="money-display">5.000.000</span> VNĐ</span>
@@ -232,13 +242,21 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const fmt = n => Math.round(n).toLocaleString('vi-VN');
 const wallet = {
   bal: 0, shown: 0, anim: null, el: $('#money-display'),
-  load(){
+  /* LUÔN đọc số dư mới nhất từ localStorage — trang chủ có thể vừa trừ nợ
+     hoặc tab khác vừa đổi tiền, tuyệt đối không dùng số cũ trong bộ nhớ */
+  read(){
     const v = parseInt(String(localStorage.getItem('userBalance')||'').replace(/[.,\s]/g,''));
-    this.bal = isNaN(v) ? 5000000 : v; this.render();
+    return isNaN(v) ? 5000000 : v;
   },
-  render(){ this.el.textContent = fmt(this.bal); this.shown = this.bal },
+  load(){ this.bal = this.read(); this.render() },
+  render(){
+    this.el.textContent = fmt(this.bal); this.shown = this.bal;
+    $('#money-pill').classList.toggle('negative', this.bal < 0); // âm tiền -> viền đỏ
+  },
   set(v){
-    this.bal = Math.max(0, Math.round(v));
+    /* ĐÃ BỎ Math.max(0,...): đang âm tiền (bị trừ nợ quá hạn) thì cứ giữ âm,
+       làm thêm 8 triệu là âm bớt 8 triệu — về đúng 0 thì hết âm, khớp khoản nợ */
+    this.bal = Math.round(v);
     localStorage.setItem('userBalance', this.bal);
     if(this.anim) cancelAnimationFrame(this.anim);
     const from = this.shown, to = this.bal, t0 = performance.now();
@@ -248,11 +266,40 @@ const wallet = {
       this.shown = Math.round(from+(to-from)*e); this.el.textContent = fmt(this.shown);
       if(p<1) this.anim = requestAnimationFrame(step); else this.anim = null };
     this.anim = requestAnimationFrame(step);
+    $('#money-pill').classList.toggle('negative', this.bal < 0);
   },
-  add(v){ this.set(this.bal + v) }
+  /* Cộng tiền: đọc lại số MỚI NHẤT từ localStorage rồi mới cộng
+     -> không bao giờ ghi đè mất khoản trừ nợ trang chủ vừa tính */
+  add(v){ this.set(this.read() + v) }
 };
 wallet.load();
-addEventListener('storage', e => { if(e.key === 'userBalance') wallet.load() });
+addEventListener('storage',  e => { if(e.key === 'userBalance') wallet.load() });
+addEventListener('pageshow', () => wallet.load()); // quay lại trang bằng nút Back
+
+/* ============ THEO DÕI KHOẢN NỢ (đồng bộ với trang chủ) ============ */
+function getLoan(){
+  const p = parseInt(localStorage.getItem('loanPrincipal') || '0');
+  if(!p) return null;
+  return { total: parseInt(localStorage.getItem('loanTotal')) || p * 2,
+           due:   parseInt(localStorage.getItem('loanDueAt')) || 0 };
+}
+function tickDebt(){
+  const pill = $('#debt-pill'), disp = $('#debt-display');
+  const loan = getLoan();
+  if(!loan){ pill.style.display = 'none'; return }
+  pill.style.display = 'flex';
+  const left = loan.due - Date.now();
+  if(left > 0){
+    const s = Math.ceil(left / 1000);
+    disp.textContent = `${fmt(loan.total)} • còn ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    pill.classList.toggle('urgent', left < 60000); // dưới 1 phút -> nhấp nháy
+  } else {
+    disp.textContent = 'QUÁ HẠN — về Trang Chủ!';
+    pill.classList.add('urgent');
+  }
+}
+ $('#debt-pill').addEventListener('click', () => location.href = 'index.html');
+setInterval(tickDebt, 500); tickDebt();
 
 /* ============ ÂM THANH ĐỒNG QUÊ (WebAudio, chung khóa "muted") ============ */
 const sound = {
@@ -491,7 +538,7 @@ function triggerJackpot(){
   }
 
   rice = 0; updateRice();
-  wallet.add(totalEarned);
+  wallet.add(totalEarned); // tự đọc số dư mới nhất trước khi cộng
   sound.coin();
   spawnFloatingText(e.clientX, e.clientY - 20, `+${totalEarned.toLocaleString()}💰`, "#FFD54F", "40px");
   addLog(`🛒 [BÁN SỈ] Bán ${amountToSell} Gạo thu về ${totalEarned.toLocaleString()} VNĐ!`, "#4CAF50");
