@@ -8,44 +8,92 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg-color:#0c1831;--card-bg:#14213d;--accent:#00d2ff;--tai-color:#ff4757;--gold:#f1c40f;--success:#2ecc71}
+*{-webkit-tap-highlight-color:transparent}
 body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh;margin:0;padding:20px;box-sizing:border-box;user-select:none;background-image:radial-gradient(circle at 50% 0%,#14213d 0%,#0c1831 60%);overflow-x:hidden}
 .navbar{width:100%;max-width:1100px;display:flex;justify-content:space-between;align-items:center;padding:20px 30px;background:var(--card-bg);border-bottom:4px solid var(--accent);border-radius:20px;box-shadow:0 10px 30px rgba(0,210,255,.2);box-sizing:border-box;margin-bottom:20px;flex-wrap:wrap;gap:12px}
 .logo-text{font-size:26px;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 10px var(--accent)}
-.balance-box{color:var(--gold);font-size:24px;font-weight:700;font-family:'Roboto Mono',monospace;background:rgba(0,0,0,.4);padding:10px 20px;border-radius:12px;border:1px solid rgba(241,196,15,.3);display:flex;align-items:center;gap:10px}
+.balance-box{color:var(--gold);font-size:24px;font-weight:700;font-family:'Roboto Mono',monospace;background:rgba(0,0,0,.4);padding:10px 20px;border-radius:12px;border:1px solid rgba(241,196,15,.3);display:flex;align-items:center;gap:10px;transition:color .3s,border-color .3s}
+.balance-box.negative{color:var(--tai-color);border-color:rgba(255,71,87,.55)}
 .balance-box svg{width:22px;height:22px;flex:none}
 .slogan{font-size:19px;color:var(--tai-color);text-transform:uppercase;margin:6px 0 26px;font-style:italic;text-shadow:0 0 10px rgba(255,71,87,.5)}
 .main-title{font-size:34px;color:var(--accent);text-transform:uppercase;letter-spacing:4px;margin-bottom:30px;text-shadow:0 0 12px rgba(0,210,255,.4)}
 .game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:35px;width:100%;max-width:1050px}
-.game-card{background:var(--card-bg);border:3px solid rgba(0,210,255,.2);border-radius:30px;height:250px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-decoration:none;color:#fff;transition:all .3s ease;box-shadow:inset 0 0 20px rgba(0,0,0,.5);padding-top:30px;padding-bottom:25px;box-sizing:border-box}
+.game-card{background:var(--card-bg);border:3px solid rgba(0,210,255,.2);border-radius:30px;height:250px;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-decoration:none;color:#fff;transition:all .3s ease;box-shadow:inset 0 0 20px rgba(0,0,0,.5);padding-top:30px;padding-bottom:25px;box-sizing:border-box;position:relative}
 .game-card:hover{transform:translateY(-10px);border-color:var(--accent);box-shadow:0 0 20px rgba(0,210,255,.4)}
 .game-icon{height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:15px}
-.game-icon svg{width:74px;height:74px;color:var(--accent);filter:drop-shadow(0 0 8px rgba(0,210,255,.35))}
+.game-icon svg{width:74px;height:74px;color:var(--accent);animation:rgbHue 2s linear infinite}
+@keyframes rgbHue{from{filter:hue-rotate(0deg) drop-shadow(0 0 8px rgba(0,210,255,.35))}to{filter:hue-rotate(360deg) drop-shadow(0 0 8px rgba(0,210,255,.35))}}
+.game-card:hover .game-icon svg{animation-duration:.6s}
 .game-name{height:35px;display:flex;align-items:center;justify-content:center;font-size:24px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 .play-btn{margin-top:auto;padding:8px 25px;background:var(--accent);color:#000;border-radius:10px;font-size:15px;text-transform:uppercase;opacity:0;transition:.3s;font-weight:700;letter-spacing:1px}
 .game-card:hover .play-btn{opacity:1}
+.debt-badge{display:none;position:absolute;top:12px;right:14px;background:var(--tai-color);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:6px;box-shadow:0 0 12px rgba(255,71,87,.85);animation:badgeBlink .55s steps(2) infinite}
+@keyframes badgeBlink{50%{opacity:.1}}
+.game-card.debt-alert{border-color:var(--tai-color);animation:debtBlink .85s ease-in-out infinite}
+@keyframes debtBlink{0%,100%{box-shadow:inset 0 0 20px rgba(0,0,0,.5),0 0 6px rgba(255,71,87,.3)}50%{box-shadow:inset 0 0 20px rgba(120,0,10,.45),0 0 38px rgba(255,71,87,.95)}}
+.game-card.debt-alert .debt-badge{display:block}
+.game-card.debt-alert .game-icon svg{animation:none;color:var(--tai-color);filter:drop-shadow(0 0 10px rgba(255,71,87,.8))}
+.game-card.debt-alert .game-name{color:var(--tai-color);animation:textBlink .85s infinite}
+@keyframes textBlink{50%{opacity:.3}}
 .btn-reset-container{margin-top:50px;margin-bottom:20px;text-align:center;position:relative;width:100%;max-width:700px}
-.btn-reset{background:var(--tai-color);color:#fff;border:2px solid #fff;padding:12px 40px;font-size:20px;font-family:'Oswald',sans-serif;font-weight:bold;border-radius:10px;cursor:pointer;transition:.3s;text-transform:uppercase;letter-spacing:2px;box-shadow:0 0 15px rgba(255,71,87,.6)}
-.btn-reset:hover{filter:brightness(1.2);transform:scale(1.03)}
-.btn-reset.disabled{background:#555!important;color:#999!important;border-color:#444!important;box-shadow:none!important;cursor:not-allowed;transform:none}
-#cooldown-timer{display:block;font-size:14px;color:rgba(255,255,255,.4);margin-top:8px;font-family:'Roboto Mono',monospace}
-.btn-chuyen-sinh{position:absolute;right:0;bottom:0;background:transparent;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.2);padding:4px 10px;font-size:11px;border-radius:5px;cursor:pointer;text-transform:uppercase;font-family:'Oswald',sans-serif;transition:.3s}
-.btn-chuyen-sinh:hover{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.6)}
-.custom-modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.btn-reset{background:var(--gold);color:#0c1831;border:2px solid #fff;padding:12px 40px;font-size:20px;font-family:'Oswald',sans-serif;font-weight:bold;border-radius:10px;cursor:pointer;transition:.3s;text-transform:uppercase;letter-spacing:2px;box-shadow:0 0 15px rgba(241,196,15,.45)}
+.btn-reset:hover{filter:brightness(1.15);transform:scale(1.03)}
+.btn-reset.in-debt{background:var(--tai-color);color:#fff;box-shadow:0 0 15px rgba(255,71,87,.6);animation:btnPulse 1.1s ease-in-out infinite}
+@keyframes btnPulse{50%{box-shadow:0 0 30px rgba(255,71,87,.95)}}
+.btn-reset.cooldown{background:#37455e;color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.2);box-shadow:none;cursor:not-allowed}
+.btn-reset.cooldown:hover{filter:none;transform:none}
+#loan-timer{display:block;font-size:14px;color:rgba(255,255,255,.55);margin-top:8px;font-family:'Roboto Mono',monospace;letter-spacing:.5px;min-height:18px}
+#loan-timer.urgent{color:var(--tai-color);animation:textBlink .6s infinite}
+.custom-modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px;box-sizing:border-box}
 .custom-modal.active{opacity:1;pointer-events:auto}
-.modal-content{background:var(--card-bg);border:2px solid var(--tai-color);padding:50px;border-radius:20px;text-align:center;max-width:650px;transform:scale(.8);transition:transform .3s ease}
+.modal-content{background:var(--card-bg);border:2px solid var(--tai-color);padding:40px 50px;border-radius:20px;text-align:center;max-width:650px;width:100%;transform:scale(.8);transition:transform .3s ease;box-sizing:border-box}
 .custom-modal.active .modal-content{transform:scale(1)}
-.modal-text{font-size:24px;color:#fff;margin-bottom:35px;text-transform:uppercase;line-height:1.6}
-.modal-btn{background:#555;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:bold;cursor:pointer;margin:0 10px;transition:.2s}
-.modal-btn:hover{filter:brightness(1.2)}
+.modal-text{font-size:24px;color:#fff;margin-bottom:28px;text-transform:uppercase;line-height:1.6}
+.modal-btn{background:#555;color:#fff;border:none;padding:12px 25px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:18px;font-weight:bold;cursor:pointer;transition:.2s}
+.modal-btn:hover{filter:brightness(1.25)}
+.modal-btn.gold{background:var(--gold);color:#0c1831}
+.modal-btn:disabled{opacity:.35;cursor:not-allowed;filter:none}
 .shake-earthquake{animation:earthquake .15s infinite!important}
 @keyframes earthquake{0%,100%{transform:translate(0,0)}25%{transform:translate(4px,4px)}50%{transform:translate(-4px,-4px)}75%{transform:translate(4px,-4px)}}
+.loan-body{width:100%;display:flex;flex-direction:column;align-items:center;gap:16px}
+.loan-quick{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.loan-chip{background:rgba(0,0,0,.35);border:1px solid rgba(0,210,255,.35);color:#fff;font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.5px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:.2s}
+.loan-chip:hover{border-color:var(--accent)}
+.loan-chip.active{background:var(--accent);color:#000;font-weight:700;border-color:var(--accent)}
+.loan-input-row{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:8px 16px}
+.loan-input-row input{background:transparent;border:none;outline:none;color:var(--gold);font-family:'Roboto Mono',monospace;font-size:22px;font-weight:700;width:190px;text-align:center}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.loan-cur{color:rgba(255,255,255,.4);font-size:14px}
+.loan-calc{font-size:17px;color:rgba(255,255,255,.75);font-family:'Roboto Mono',monospace}
+.loan-calc b{color:#fff}
+.loan-calc b.red{color:var(--tai-color)}
+.loan-calc b.green{color:var(--success)}
+.loan-note{font-size:13px;color:rgba(255,255,255,.5);text-transform:none;letter-spacing:.3px;line-height:1.7;max-width:430px}
+.loan-note b{color:rgba(255,255,255,.85)}
+.loan-err{color:var(--tai-color);font-size:14px;min-height:18px;letter-spacing:.5px;text-transform:none}
+.debt-lock{background:rgba(255,71,87,.12);border:1px dashed var(--tai-color);color:var(--tai-color);font-size:13px;letter-spacing:1px;padding:9px 16px;border-radius:8px;text-transform:uppercase;line-height:1.6}
+.debt-total{font-size:32px;color:var(--tai-color);font-family:'Roboto Mono',monospace;font-weight:700;text-shadow:0 0 15px rgba(255,71,87,.4)}
+.debt-count{font-size:18px;color:#fff}
+.debt-count .mono{font-family:'Roboto Mono',monospace;color:var(--gold);font-size:22px;font-weight:700}
+.debt-count.urgent .mono{color:var(--tai-color);animation:textBlink .6s infinite}
+.loan-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:20000;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--card-bg);border-left:4px solid var(--accent);padding:14px 22px;border-radius:10px;font-size:16px;letter-spacing:.5px;box-shadow:0 8px 30px rgba(0,0,0,.55);max-width:330px;animation:toastIn .3s ease}
+.toast b{color:var(--accent)}
+.toast.gold{border-color:var(--gold)}.toast.gold b{color:var(--gold)}
+.toast.success{border-color:var(--success)}.toast.success b{color:var(--success)}
+.toast.danger{border-color:var(--tai-color)}.toast.danger b{color:var(--tai-color)}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastOut{to{transform:translateX(120%);opacity:0}}
 @media(max-width:900px){.game-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.game-grid{grid-template-columns:1fr}.game-card{height:215px;padding-top:22px}.logo-text{font-size:19px}.balance-box{font-size:18px;padding:8px 16px}}
+@media(max-width:600px){.game-grid{grid-template-columns:1fr}.game-card{height:215px;padding-top:22px}.logo-text{font-size:19px}.balance-box{font-size:18px;padding:8px 16px}.modal-content{padding:28px 18px}.modal-text{font-size:20px}.loan-input-row input{width:140px;font-size:19px}}
 </style>
 </head>
 <body>
 
-<!-- Bộ icon SVG dùng chung (một màu cyan cho đồng bộ) -->
+<!-- Bộ icon SVG dùng chung -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="ic-coin" viewBox="0 0 24 24">
   <circle cx="12" cy="12" r="9" fill="none" stroke="#f1c40f" stroke-width="2.4"/>
@@ -124,7 +172,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 
 <div class="navbar">
   <div class="logo-text">TRUNG TÂM GIẢI TRÍ</div>
-  <div class="balance-box"><svg><use href="#ic-coin"/></svg><span id="global-balance">5.000.000</span></div>
+  <div class="balance-box" id="balance-box"><svg><use href="#ic-coin"/></svg><span id="global-balance">5.000.000</span></div>
 </div>
 
 <div class="slogan">" Nghiện Là Dở Rồi ! "</div>
@@ -152,6 +200,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
     <div class="game-name">Bầu Cua Tôm Cá</div><div class="play-btn">Chơi Ngay</div>
   </a>
   <a href="farm.html" class="game-card" id="card-farm">
+    <div class="debt-badge">HẾT TIỀN!</div>
     <div class="game-icon"><svg><use href="#ic-wheat"/></svg></div>
     <div class="game-name">Đi Mần</div><div class="play-btn">Làm Nông</div>
   </a>
@@ -170,9 +219,8 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 </div>
 
 <div class="btn-reset-container">
-  <button id="bocBatHoBtn" class="btn-reset">[ Bốc Bát Họ ]</button>
-  <span id="cooldown-timer"></span>
-  <button id="chuyenSinhBtn" class="btn-chuyen-sinh">Chuyển Sinh</button>
+  <button id="muonTienBtn" class="btn-reset">[ MƯỢN TIỀN ]</button>
+  <span id="loan-timer"></span>
 </div>
 
 <div id="custom-modal" class="custom-modal">
@@ -183,69 +231,279 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 </div>
 
 <script>
-const COOLDOWN_TIME = 30 * 60 * 1000;
-let cooldownInterval;
+/* ====== RESET MỘT LẦN: xóa sạch mọi nợ nần cũ ======
+   Lần đầu mở trang sau khi cập nhật: khoản mượn cũ, hồi chiêu cũ bị xóa hết,
+   ví đang âm được đưa về 5.000.000 khởi đầu. Tiền dương vẫn giữ nguyên. */
+(function(){
+  const FLAG = 'muonKhongLaiV1';
+  if(localStorage.getItem(FLAG)) return;      // đã reset rồi thì bỏ qua
+  ['loanPrincipal','loanTotal','loanDueAt','loanLock','lastBorrowAt']
+    .forEach(k => localStorage.removeItem(k));
+  const bal = parseInt(localStorage.getItem('userBalance'));
+  if(isNaN(bal) || bal < 0) localStorage.setItem('userBalance', 5000000);
+  localStorage.setItem(FLAG, '1');
+})();
 
+/* ====== CÀI ĐẶT MƯỢN TIỀN (KHÔNG LÃI) ======
+   LOAN_MS      : thời hạn trả (10 phút) — quá hạn tự động thu lại ĐÚNG số tiền mượn
+   BORROW_CD_MS : mỗi 30 phút được mượn 1 lần (tính từ lúc mượn)
+   LOAN_RATE    : 1 = KHÔNG LÃI, mượn bao nhiêu trả đúng bấy nhiêu
+   MAX_VAY      : tối đa 10 triệu / lần mượn */
+const LOAN_MS      = 10 * 60 * 1000;
+const BORROW_CD_MS = 30 * 60 * 1000;
+const LOAN_RATE    = 1;
+const MIN_VAY      = 100000, MAX_VAY = 10000000; // tối đa 10 triệu
+const QUICK        = [500000, 1000000, 2000000, 5000000, 10000000];
+const chipLbl      = a => a >= 1000000 ? (a / 1000000) + ' TR' : (a / 1000) + 'K';
+
+const $   = id => document.getElementById(id);
+const fmt = n => n.toLocaleString('vi-VN');
+const fmtCount = ms => {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0');
+};
+
+/* ====== KHOẢN MƯỢN (localStorage) ====== */
+function getLoan(){
+  const p = parseInt(localStorage.getItem('loanPrincipal') || '0');
+  if(!p) return null;
+  return { principal: p,
+           total: parseInt(localStorage.getItem('loanTotal')) || p * LOAN_RATE,
+           due:   parseInt(localStorage.getItem('loanDueAt')) || 0 };
+}
+function setLoan(amount){
+  localStorage.setItem('loanPrincipal', amount);
+  localStorage.setItem('loanTotal', amount * LOAN_RATE); // = đúng số tiền mượn, không lãi
+  localStorage.setItem('loanDueAt', Date.now() + LOAN_MS);
+}
+function clearLoan(){
+  ['loanPrincipal','loanTotal','loanDueAt'].forEach(k => localStorage.removeItem(k));
+}
+
+/* Hồi chiêu mượn tiền: 30 phút tính từ lúc mượn (lưu lại để qua reload vẫn nhớ) */
+function getCooldownLeft(){
+  const last = parseInt(localStorage.getItem('lastBorrowAt') || '0');
+  return last ? Math.max(0, last + BORROW_CD_MS - Date.now()) : 0;
+}
+
+/* ====== SỐ DƯ & CẢNH BÁO HẾT TIỀN ====== */
 function refreshBalance(){
   let b = localStorage.getItem('userBalance');
   if(b === null || isNaN(parseInt(b))){ localStorage.setItem('userBalance', 5000000); b = 5000000; }
-  document.getElementById('global-balance').innerText = parseInt(b).toLocaleString();
+  const v = parseInt(b);
+  $('global-balance').innerText = fmt(v);
+  $('balance-box').classList.toggle('negative', v < 0);
+  $('card-farm').classList.toggle('debt-alert', v < 0); // hết tiền -> Đi Mần nhấp nháy
 }
 
-function updateCooldownUI(){
-  const last = localStorage.getItem('lastBocBatHoTime');
-  const btn = document.getElementById('bocBatHoBtn'), timer = document.getElementById('cooldown-timer');
-  if(last){
-    const passed = Date.now() - parseInt(last);
-    if(passed < COOLDOWN_TIME){
-      btn.classList.add('disabled'); btn.disabled = true;
-      const left = COOLDOWN_TIME - passed;
-      timer.innerText = `Chờ ${Math.floor(left/60000)} phút ${Math.floor(left%60000/1000)} giây để bốc tiếp...`;
-      return true;
+function updateMuonBtn(){
+  const loan = getLoan(), btn = $('muonTienBtn');
+  const cd = getCooldownLeft();
+  btn.classList.remove('in-debt', 'cooldown');
+  if(loan){
+    btn.textContent = '[ TRẢ TIỀN ]';
+    btn.classList.add('in-debt');
+  } else if(cd > 0){
+    btn.textContent = '[ MƯỢN TIỀN ]';
+    btn.classList.add('cooldown'); // xám = đang hồi chiêu
+  } else {
+    btn.textContent = '[ MƯỢN TIỀN ]';
+  }
+}
+
+/* ====== TOAST (thay alert) ====== */
+function showToast(msg, type){
+  let wrap = document.querySelector('.toast-wrap');
+  if(!wrap){ wrap = document.createElement('div'); wrap.className = 'toast-wrap'; document.body.appendChild(wrap); }
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || '');
+  t.innerHTML = msg;
+  wrap.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3500);
+}
+
+/* ====== MODAL ====== */
+function closeModal(){ $('custom-modal').classList.remove('active'); }
+
+function openModal(){
+  const loan = getLoan();
+  if(loan) renderDebtModal(loan); else renderBorrowModal();
+  $('custom-modal').classList.add('active');
+}
+
+/* --- Màn hình MƯỢN TIỀN --- */
+function renderBorrowModal(){
+  const active = getLoan();
+  if(active){ renderDebtModal(active); return; }
+
+  $('modal-text').innerText = 'MƯỢN TIỀN';
+  $('modal-buttons').innerHTML = `
+    <div class="loan-body">
+      <div class="loan-quick">${QUICK.map(a => `<button class="loan-chip" data-a="${a}">${chipLbl(a)}</button>`).join('')}</div>
+      <div class="loan-input-row">
+        <input type="number" id="loan-input" value="1000000" min="${MIN_VAY}" max="${MAX_VAY}" step="100000">
+        <span class="loan-cur">VND</span>
+      </div>
+      <div class="loan-calc" id="loan-calc"></div>
+      <div class="loan-note"><b>KHÔNG LÃI</b> — mượn bao nhiêu trả đúng bấy nhiêu. Mượn tối đa <b>10 triệu</b>, mỗi <b>30 phút</b> được mượn <b>1 lần</b>. Trả trong <b>10 phút</b>, quá hạn hệ thống tự động thu lại đúng số tiền mượn.</div>
+      <div class="loan-err" id="loan-err"></div>
+      <div class="loan-actions">
+        <button class="modal-btn gold" id="btn-muon-ok">MƯỢN NGAY</button>
+        <button class="modal-btn" id="btn-muon-no">Đóng</button>
+      </div>
+    </div>`;
+
+  const input = $('loan-input'), calc = $('loan-calc'), err = $('loan-err');
+  const chips = [...document.querySelectorAll('.loan-chip')];
+  const updateCalc = () => {
+    const v = +input.value || 0;
+    calc.innerHTML = `MƯỢN <b>${fmt(v)}</b> → TRẢ <b class="green">${fmt(v * LOAN_RATE)}</b> (KHÔNG LÃI)`;
+  };
+  const syncChips = () => chips.forEach(c => c.classList.toggle('active', +c.dataset.a === +input.value));
+
+  chips.forEach(c => c.onclick = () => { input.value = c.dataset.a; err.innerText = ''; syncChips(); updateCalc(); });
+  input.oninput = () => { syncChips(); updateCalc(); };
+  $('btn-muon-no').onclick = closeModal;
+  $('btn-muon-ok').onclick = () => {
+    const debt = getLoan();
+    if(debt){
+      err.innerText = `Đang mượn ${fmt(debt.total)} — trả xong mới được mượn tiếp!`;
+      showToast('Đang mượn — <b>không thể mượn thêm tiền!</b>', 'danger');
+      return;
+    }
+    const cd = getCooldownLeft();
+    if(cd > 0){ err.innerText = `Vừa mượn ở nơi khác — chờ ${fmtCount(cd)} nữa!`; return; }
+    const v = Math.floor(+input.value || 0);
+    if(v < MIN_VAY){ err.innerText = 'Tối thiểu 100.000!'; return; }
+    if(v > MAX_VAY){ err.innerText = 'Tối đa 10.000.000 (10 TR)!'; return; }
+    setLoan(v);
+    localStorage.setItem('lastBorrowAt', Date.now()); // bắt đầu hồi chiêu 30 phút
+    const cur = parseInt(localStorage.getItem('userBalance')) || 0;
+    localStorage.setItem('userBalance', cur + v);
+    closeModal(); refreshBalance(); updateMuonBtn(); tick();
+    showToast(`Mượn thành công <b>${fmt(v)}</b>! Không lãi — trả đúng <b>${fmt(v)}</b> trong 10 phút.`, 'gold');
+  };
+  syncChips(); updateCalc();
+}
+
+/* --- Màn hình TRẢ TIỀN (đang có khoản mượn) --- */
+function renderDebtModal(loan){
+  const bal = parseInt(localStorage.getItem('userBalance')) || 0;
+  const enough = bal >= loan.total;
+  $('modal-text').innerText = 'TIỀN ĐANG MƯỢN';
+  $('modal-buttons').innerHTML = `
+    <div class="loan-body">
+      <div class="debt-total">-${fmt(loan.total)}</div>
+      <div class="debt-count" id="modal-count-wrap">Còn <span id="modal-countdown" class="mono">--:--</span> để trả</div>
+      <div class="debt-lock">Đang mượn — không mượn thêm được cho đến khi trả xong khoản này</div>
+      <div class="loan-note">Đã mượn <b>${fmt(loan.principal)}</b>, không lãi → trả đúng <b>${fmt(loan.total)}</b>. Quá hạn tự động thu lại đúng số tiền mượn.</div>
+      <div class="loan-err" id="loan-err">${enough ? '' : 'Không đủ tiền trả — vào “Đi Mần” kiếm tiền nhanh!'}</div>
+      <div class="loan-actions">
+        <button class="modal-btn gold" id="btn-pay">TRẢ TIỀN NGAY</button>
+        <button class="modal-btn" id="btn-debt-no">Đóng</button>
+      </div>
+    </div>`;
+  // Bấm trả tiền: đọc lại số dư MỚI NHẤT (ví có thể vừa thay đổi ở tab/trang khác)
+  $('btn-pay').onclick = () => {
+    const cur = parseInt(localStorage.getItem('userBalance')) || 0;
+    if(cur < loan.total){
+      $('loan-err').innerText = 'Không đủ tiền trả — vào “Đi Mần” kiếm tiền nhanh!';
+      showToast('Không đủ tiền để trả!', 'danger');
+      return;
+    }
+    localStorage.setItem('userBalance', cur - loan.total);
+    clearLoan();
+    closeModal(); refreshBalance(); updateMuonBtn(); tick();
+    const cd = getCooldownLeft();
+    showToast(`Đã trả xong <b>${fmt(loan.total)}</b>. Không nợ nần gì nữa!${cd > 0 ? ` (mượn lại sau ${fmtCount(cd)})` : ''}`, 'success');
+  };
+  $('btn-debt-no').onclick = closeModal;
+  tick();
+}
+
+/* --- Hết hạn: tự động thu lại đúng số tiền mượn (an toàn nhiều tab) --- */
+function autoDeduct(){
+  const loan = getLoan();
+  if(!loan || Date.now() < loan.due) return;
+
+  // Nhiều tab cùng phát hiện hết hạn: giành khóa, chỉ 1 tab được trừ -> không bị trừ 2 lần
+  const key = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  localStorage.setItem('loanLock', key);
+  if(localStorage.getItem('loanLock') !== key) return; // tab khác đã giành quyền
+  if(!getLoan()) return;                              // khoản mượn đã được xử lý rồi
+
+  clearLoan();
+  localStorage.removeItem('loanLock');
+
+  const cur = parseInt(localStorage.getItem('userBalance')) || 0;
+  const newBal = cur - loan.total;
+  localStorage.setItem('userBalance', newBal);
+  refreshBalance(); updateMuonBtn();
+
+  $('modal-text').innerText = 'HẾT HẠN TRẢ TIỀN!';
+  $('modal-buttons').innerHTML = `
+    <div class="loan-body">
+      <div class="debt-total">-${fmt(loan.total)}</div>
+      <div class="loan-note" style="font-size:15px;color:rgba(255,255,255,.7)">
+        Quá 10 phút không trả, hệ thống tự động thu lại <b>đúng số tiền mượn</b> (không lãi).<br>
+        Số dư hiện tại: <b style="color:${newBal < 0 ? 'var(--tai-color)' : 'var(--gold)'};font-family:'Roboto Mono',monospace">${fmt(newBal)}</b>
+        ${newBal < 0 ? '<br>Ví đang âm — vào <b>Đi Mần</b> kiếm tiền nhé!' : ''}
+      </div>
+      <div class="loan-actions"><button class="modal-btn" id="btn-expired-ok" style="background:var(--tai-color)">Đã Rõ</button></div>
+    </div>`;
+  $('custom-modal').classList.add('active');
+  $('btn-expired-ok').onclick = closeModal;
+  const c = $('modal-content');
+  c.classList.add('shake-earthquake');
+  setTimeout(() => c.classList.remove('shake-earthquake'), 900);
+}
+
+/* ====== ĐỒNG HỒ + ĐỒNG BỘ HÓA (chạy mỗi 0.5s) ====== */
+function tick(){
+  refreshBalance();
+  updateMuonBtn();
+
+  const span = $('loan-timer');
+  const loan = getLoan();
+  if(loan){
+    const left = loan.due - Date.now();
+    if(left <= 0){ autoDeduct(); return; }
+    const t = fmtCount(left), urgent = left < 60000;
+    span.innerText = `Mượn ${fmt(loan.total)} — trả trong ${t}`;
+    span.classList.toggle('urgent', urgent);
+    const mc = $('modal-countdown');
+    if(mc){ mc.innerText = t; $('modal-count-wrap').classList.toggle('urgent', urgent); }
+  } else {
+    // Không mượn gì: hiện hồi chiêu 30 phút (nếu có)
+    const cd = getCooldownLeft();
+    span.classList.remove('urgent');
+    span.innerText = cd > 0 ? `Mượn lại được sau ${fmtCount(cd)}` : '';
+    // Modal trả tiền còn mở mà khoản mượn đã bị xử lý chỗ khác -> tự đóng
+    if($('modal-countdown') && $('custom-modal').classList.contains('active')){
+      closeModal();
+      showToast('Khoản mượn này đã được xử lý ở nơi khác!', 'success');
     }
   }
-  btn.classList.remove('disabled'); btn.disabled = false; timer.innerText = '';
-  return false;
 }
 
-function handleBocBatHo(){
-  if(updateCooldownUI()) return;
-  const cur = parseInt(localStorage.getItem('userBalance')) || 0;
-  localStorage.setItem('userBalance', cur + 5000000);
-  localStorage.setItem('lastBocBatHoTime', Date.now());
-  refreshBalance(); updateCooldownUI();
-}
+/* ====== GẮN SỰ KIỆN ====== */
+ $('muonTienBtn').addEventListener('click', () => {
+  if(getLoan()){ openModal(); return; }          // đang mượn -> mở màn trả tiền
+  const cd = getCooldownLeft();
+  if(cd > 0){
+    showToast(`Mỗi 30 phút chỉ được mượn 1 lần — chờ thêm <b>${fmtCount(cd)}</b> nữa!`, 'danger');
+    return;
+  }
+  openModal();                                    // hết hồi chiêu -> mượn được
+});
 
-function showChuyenSinhStep1(){
-  document.getElementById('modal-text').innerText = 'RESET TOÀN BỘ TIỀN VỀ 5 TRIỆU?';
-  document.getElementById('modal-buttons').innerHTML =
-    '<button class="modal-btn" style="background:var(--tai-color)" id="btn-cs-ok">Đồng Ý</button>' +
-    '<button class="modal-btn" id="btn-cs-no">Hủy</button>';
-  document.getElementById('custom-modal').classList.add('active');
-  document.getElementById('btn-cs-ok').onclick = thucHienChuyenSinh;
-  document.getElementById('btn-cs-no').onclick = () => document.getElementById('custom-modal').classList.remove('active');
-}
-
-function thucHienChuyenSinh(){
-  localStorage.setItem('userBalance', 5000000);
-  localStorage.removeItem('slotJackpot'); // reset luôn hũ quay
-  refreshBalance();
-  const c = document.getElementById('modal-content');
-  c.classList.add('shake-earthquake');
-  setTimeout(() => {
-    c.classList.remove('shake-earthquake');
-    document.getElementById('custom-modal').classList.remove('active');
-  }, 1000);
-}
-
-document.getElementById('bocBatHoBtn').addEventListener('click', handleBocBatHo);
-document.getElementById('chuyenSinhBtn').addEventListener('click', showChuyenSinhStep1);
-addEventListener('storage', e => { if(e.key === 'userBalance') refreshBalance(); });
+// Đồng bộ đa tab + quay lại bằng nút Back
+['storage','pageshow','focus'].forEach(ev => addEventListener(ev, tick));
+document.addEventListener('visibilitychange', () => { if(!document.hidden) tick(); });
 
 document.addEventListener('DOMContentLoaded', () => {
-  refreshBalance();
-  updateCooldownUI();
-  cooldownInterval = setInterval(updateCooldownUI, 1000);
+  tick();                  // đồng bộ ngay khi mở trang
+  setInterval(tick, 500);  // và liên tục mỗi nửa giây
 });
 </script>
 </body>
