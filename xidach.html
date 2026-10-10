@@ -25,7 +25,8 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 #btn-snd.muted .on{display:none}
 #btn-snd.muted .off{display:block}
 #btn-snd.muted{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.15)}
-.balance-box{color:var(--gold);font-size:17px;font-weight:700;font-family:'Roboto Mono',monospace;background:rgba(0,0,0,.4);padding:7px 14px;border-radius:12px;border:1px solid rgba(241,196,15,.3);display:flex;align-items:center;gap:8px}
+.balance-box{color:var(--gold);font-size:17px;font-weight:700;font-family:'Roboto Mono',monospace;background:rgba(0,0,0,.4);padding:7px 14px;border-radius:12px;border:1px solid rgba(241,196,15,.3);display:flex;align-items:center;gap:8px;transition:color .3s,border-color .3s}
+.balance-box.negative{color:var(--tai-color);border-color:rgba(255,71,87,.5)}
 .balance-box svg{width:18px;height:18px;flex:none}
 .home-btn{padding:9px 18px;background:var(--accent);color:#000;border-radius:10px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;text-decoration:none;box-shadow:0 0 15px rgba(0,210,255,.35);transition:.25s;white-space:nowrap}
 .home-btn:hover{filter:brightness(1.15)}
@@ -33,7 +34,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 .panel{background:var(--card-bg);border:2px solid rgba(0,210,255,.2);border-radius:24px;box-shadow:inset 0 0 20px rgba(0,0,0,.5);padding:20px}
 .panel-title{font-size:13.5px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:12px;text-shadow:0 0 8px rgba(0,210,255,.3)}
 .panel-title::after{content:'';flex:1;height:1px;background:rgba(0,210,255,.25)}
-/* ---- CỘT TRÁI: BÀN (nút đứng yên trên, đệm dưới đáy) ---- */
+/* ---- CỘT TRÁI: BÀN ---- */
 .left-col{min-height:0;display:flex;justify-content:center}
 .table{height:100%;width:100%;max-width:660px;display:flex;flex-direction:column;position:relative;margin:0;padding-bottom:26px}
 .hand-head{flex:none;display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
@@ -47,7 +48,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 .badge.cyan{color:var(--accent);border-color:rgba(0,210,255,.55)}
 .badge.red{color:var(--tai-color);border-color:rgba(255,71,87,.55)}
 .cards-display{flex:none;display:flex;gap:10px;min-height:calc(var(--cw)*1.42);align-items:center;justify-content:center;padding:2px 0}
-/* ---- LÁ BÀI, FLIP 3D (đã chống dính góc) ---- */
+/* ---- LÁ BÀI, FLIP 3D ---- */
 .card{width:var(--cw);height:calc(var(--cw)*1.42);perspective:900px;flex:none;animation:cardIn .38s cubic-bezier(.2,1,.4,1)}
 @keyframes cardIn{from{opacity:0;transform:translateY(-30px) rotate(-7deg) scale(.88)}to{opacity:1;transform:none}}
 .card .inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,1,.4,1)}
@@ -63,14 +64,14 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 .front .mid{position:absolute;inset:0;display:grid;place-items:center}
 .front .mid svg{width:calc(var(--cw)*.48);height:calc(var(--cw)*.48)}
 .front.red{color:#c0392b}.front.blk{color:#1e2733}
-/* ---- DẢI NỈ GIỮA: đàn hồi, hút phần trống ---- */
+/* ---- DẢI NỈ GIỮA ---- */
 .felt{flex:1;min-height:62px;margin:13px 0;background:rgba(0,0,0,.3);border:1px solid rgba(0,210,255,.15);border-radius:16px;padding:9px 14px;display:flex;flex-direction:column;justify-content:center}
 .status{text-align:center;font-size:19px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.65);line-height:1.35}
 .status.win{color:var(--gold);text-shadow:0 0 12px rgba(241,196,15,.5)}
 .status.lose{color:var(--tai-color);text-shadow:0 0 10px rgba(255,71,87,.4)}
 .status.tie{color:var(--accent)}
 .status .s-note{display:block;font-size:12px;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin-top:3px}
-/* ---- ĐIỀU KHIỂN: đứng im sau hàng bài, không dính đáy ---- */
+/* ---- ĐIỀU KHIỂN ---- */
 .controls{flex:none;padding-top:13px;display:flex;flex-direction:column;gap:11px}
 .chips-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center}
 .bet-lbl{font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-right:3px}
@@ -102,6 +103,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
 .s-lbl{font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.45);text-transform:uppercase;display:block;margin-bottom:4px}
 .s-val{font-family:'Roboto Mono',monospace;font-weight:700;color:var(--accent);font-size:14px}
 .stat:nth-child(2) .s-val{color:var(--gold)}
+.shoe-info{margin-top:10px;font-family:'Roboto Mono',monospace;font-size:10.5px;letter-spacing:1.5px;color:rgba(255,255,255,.4);text-align:center;text-transform:uppercase}
 .hist-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px dashed rgba(0,210,255,.15);font-size:12.5px;animation:histIn .4s}
 @keyframes histIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
 .h-no{font-family:'Roboto Mono',monospace;color:rgba(255,255,255,.35);min-width:22px}
@@ -221,6 +223,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
         <div class="rule-row"><span class="rk-num">21</span><span>Vượt 21 điểm là <b>QUẢC</b> — thua ngay</span></div>
         <div class="rule-row"><span class="rk-num">16+</span><span>Nhà cái rút đến khi ≥ 16, <b>đuổi điểm</b> bạn nếu chưa vượt</span></div>
         <div class="rule-row"><span class="rk-num">5</span><span>Bạn ngũ linh: nhà cái phải đi hết 5 lá để ăn</span></div>
+        <div class="rule-row"><span class="rk-num">52</span><span><b>BỘ BÀI THẬT</b> — xáo ngẫu nhiên chuẩn mật mã, <b>không can thiệp</b> kết quả</span></div>
       </div>
       <div class="panel">
         <div class="panel-title">Phiên Chơi</div>
@@ -229,6 +232,7 @@ body{font-family:'Oswald',sans-serif;background-color:var(--bg-color);color:#fff
           <div class="stat"><span class="s-lbl">Thắng</span><span class="s-val" id="st-wins">0</span></div>
           <div class="stat"><span class="s-lbl">Lãi / Lỗ</span><span class="s-val" id="st-net">0đ</span></div>
         </div>
+        <div class="shoe-info" id="shoe-info">SHOE 52/52</div>
       </div>
       <div class="panel">
         <div class="panel-title">Ván Gần Đây</div>
@@ -246,10 +250,16 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const fmt = n => Math.round(n).toLocaleString('vi-VN');
 const wallet = {
   bal: 0, shown: 0, anim: null, el: $('#bal'),
-  load(){ const v = parseInt(String(localStorage.getItem('userBalance')||'').replace(/[.,\s]/g,'')); this.bal = isNaN(v) ? 5000000 : v; this.render(); },
-  render(){ this.el.textContent = fmt(this.bal); this.shown = this.bal },
+  /* Luôn đọc số dư MỚI NHẤT từ localStorage — trang chủ / tab khác có thể vừa đổi */
+  read(){ const v = parseInt(String(localStorage.getItem('userBalance')||'').replace(/[.,\s]/g,'')); return isNaN(v) ? 5000000 : v },
+  load(){ this.bal = this.read(); this.render() },
+  render(){
+    this.el.textContent = fmt(this.bal); this.shown = this.bal;
+    $('.balance-box').classList.toggle('negative', this.bal < 0);
+  },
   set(v){
-    this.bal = Math.max(0, Math.round(v));
+    /* Không kẹp Math.max(0,...) — giữ đúng số, âm thì âm (khớp hệ thống mượn tiền trang chủ) */
+    this.bal = Math.round(v);
     localStorage.setItem('userBalance', this.bal);
     if(this.anim) cancelAnimationFrame(this.anim);
     const from = this.shown, to = this.bal, t0 = performance.now();
@@ -257,11 +267,14 @@ const wallet = {
       this.shown = Math.round(from+(to-from)*e); this.el.textContent = fmt(this.shown);
       if(p<1) this.anim = requestAnimationFrame(step); else this.anim = null };
     this.anim = requestAnimationFrame(step);
+    $('.balance-box').classList.toggle('negative', this.bal < 0);
   },
-  add(v){ this.set(this.bal + v) }
+  /* Đọc lại số mới nhất RỒI mới cộng -> không bao giờ đè mất thay đổi từ nơi khác */
+  add(v){ this.set(this.read() + v) }
 };
 wallet.load();
-addEventListener('storage', e => { if(e.key === 'userBalance') wallet.load() });
+addEventListener('storage',  e => { if(e.key === 'userBalance') wallet.load() });
+addEventListener('pageshow', () => wallet.load()); // quay lại bằng nút Back
 
 /* ============ TOAST ============ */
 function toast(msg, kind='', ms=2600){
@@ -311,7 +324,7 @@ addEventListener('storage', e => {
   if(e.key === 'muted'){ sound.muted = e.newValue === '1'; syncSndBtn() }
 });
 
-/* ============ BỘ BÀI ============ */
+/* ============ BỘ BÀI — NGẪU NHIÊN CHUẨN MẬT MÃ ============ */
 const SUITS = [
   { id:'su-spade',   red:false },
   { id:'su-heart',   red:true  },
@@ -329,13 +342,30 @@ function createDeck(){
     deck.push({ suit:s.id, red:s.red, value:v, nv:n });
   }
 }
+/* Số ngẫu nhiên 0..max-1 bằng crypto.getRandomValues + loại lệch modulo
+   (rejection sampling) -> MỌI hoán vị 52 lá đều đồng xác suất tuyệt đối,
+   y như xáo một bộ bài thật ngoài đời.
+   Đây là nguồn ngẫu nhiên DUY NHẤT của cả game — không dòng nào khác
+   nhìn vào tiền / mức cược / lịch sử để đổi kết quả. */
+function randInt(max){
+  const c = window.crypto || window.msCrypto;
+  if(c && c.getRandomValues){
+    const range = 4294967296, limit = range - (range % max);
+    const buf = new Uint32Array(1);
+    let x;
+    do { c.getRandomValues(buf); x = buf[0] } while(x >= limit);
+    return x % max;
+  }
+  return Math.floor(Math.random() * max); // dự phòng trình duyệt quá cũ
+}
 function shuffleDeck(){
-  for(let i = deck.length-1; i > 0; i--){
-    const j = Math.floor(Math.random()*(i+1));
+  for(let i = deck.length - 1; i > 0; i--){
+    const j = randInt(i + 1);
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 }
-function newDeck(){ createDeck(); shuffleDeck() }
+function updateShoe(){ const el = $('#shoe-info'); if(el) el.textContent = 'SHOE ' + deck.length + '/52' }
+function newDeck(){ createDeck(); shuffleDeck(); updateShoe() }
 newDeck();
 
 /* ============ TÍNH ĐIỂM & XẾP HẠNG ============ */
@@ -366,7 +396,10 @@ const game = {
 };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-/* ============ AI NHÀ CÁI ============ */
+/* ============ AI NHÀ CÁI (giữ nguyên 100%) ============
+   Nhà cái chỉ dùng thông tin công khai trên bàn: bài của bạn lật ngửa hết
+   (luật Xì Dách thật cũng vậy), còn lá úp là lá của nó — nó biết lá của
+   chính mình là đương nhiên. Không có gì "bới" trước bộ bài. */
 function dealerShouldHit(){
   const s = calcScore(game.dealerHand);
   if(s > 21) return false;
@@ -396,6 +429,7 @@ function cardEl(card){
 async function dealCard(hand, who, hidden=false){
   if(!deck.length) newDeck();
   const card = deck.pop();
+  updateShoe();
   hand.push(card);
   const box = $(who === 'dealer' ? '#dealer-cards' : '#player-cards');
   const el = cardEl(card);
@@ -471,7 +505,7 @@ function renderHist(){
 async function startGame(){
   if(game.phase !== 'bet' && game.phase !== 'done') return;
   if(wallet.bal < game.bet){
-    toast('Số dư không đủ — về Trang Chủ bốc Bát Họ','warn');
+    toast('Số dư không đủ — về Trang Chủ mượn tiền hoặc Đi Mần','warn');
     game.allIn = false;
     const ch = $$('#bet-group .chip').find(c => +c.dataset.bet === game.bet) ||
                $$('#bet-group .chip')[0];
@@ -485,7 +519,7 @@ async function startGame(){
   game.playerHand = []; game.dealerHand = [];
   game.holeOpen = false; game.holeEl = null;
   $('#dealer-cards').innerHTML = ''; $('#player-cards').innerHTML = '';
-  if(deck.length < 15) newDeck();
+  if(deck.length < 15) newDeck(); // "lá cắt" — hết接近 đây thì xáo shoe mới như bàn thật
   updateScore(); updateButtons();
   setStatus('Đang chia bài…');
 
@@ -640,7 +674,7 @@ function settle(){
  $('#btn-stand').addEventListener('click', playerStand);
 
 /* ============ KHỞI TẠO ============ */
-updateButtons(); renderStats(); renderHist(); renderBetPill();
+updateButtons(); renderStats(); renderHist(); renderBetPill(); updateShoe();
 </script>
 </body>
 </html>
